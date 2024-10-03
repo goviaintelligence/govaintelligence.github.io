@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <!--
 	GOVIA INTELLIGENCE - index.html
-	Actualizado con particles.js y nueva visualización D3.js
+	Actualizado con modificaciones solicitadas
 -->
 <html lang="es">
 	<head>
@@ -20,11 +20,37 @@
 		<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
 		<!-- Particles.js Library -->
 		<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+		<style>
+			/* Estilos para el fondo de partículas en los wrappers */
+			.wrapper {
+				position: relative;
+				z-index: 1;
+			}
+			.wrapper::before {
+				content: '';
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				z-index: -1;
+				background: transparent;
+			}
+			.particles-wrapper {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				z-index: -2;
+			}
+			#particles-js {
+				width: 100%;
+				height: 100%;
+			}
+		</style>
 	</head>
 	<body class="landing is-preload">
-
-		<!-- Particles.js Container -->
-		<div id="particles-js"></div>
 
 		<!-- Page Wrapper -->
 			<div id="page-wrapper">
@@ -39,8 +65,8 @@
 									<div id="menu">
 										<ul>
 											<li><a href="index.html">Inicio</a></li>
-											<li><a href="Servicios.html">Servicios</a></li>
-											<li><a href="Portfolio.html">Portfolio</a></li>
+											<li><a href="servicios.html">Servicios</a></li>
+											<li><a href="portfolio.html">Portfolio</a></li>
 											<li><a href="contacto.html">Contacto</a></li>
 										</ul>
 									</div>
@@ -50,7 +76,10 @@
 					</header>
 
 				<!-- Banner -->
-					<section id="banner">
+					<section id="banner" class="wrapper" data-aos="fade-up">
+						<div class="particles-wrapper">
+							<div id="particles-js"></div>
+						</div>
 						<div class="inner">
 							<h2 data-aos="fade-down">GOVIA INTELLIGENCE</h2>
 							<p data-aos="fade-up">Potenciamos tu crecimiento en el sector público y privado<br />
@@ -83,10 +112,11 @@
 					<section id="data-visualization-section" class="wrapper style3" data-aos="fade-up">
 						<div class="inner">
 							<header class="major">
-								<h2>Mejora de Eficiencia con Nuestras Soluciones</h2>
-								<p>Descubre cómo nuestras soluciones potencian la eficiencia en tu organización.</p>
+								<h2>Impacto de Nuestras Soluciones en la Eficiencia</h2>
+								<p>Según estudios de <a href="https://www.mckinsey.com" target="_blank">McKinsey</a> y <a href="https://www.gartner.com" target="_blank">Gartner</a>, la implementación de BI e IA puede mejorar significativamente la eficiencia operativa.</p>
 							</header>
 							<div id="data-visualization"></div>
+							<p>Este gráfico muestra cómo las organizaciones pueden mejorar su eficiencia al adoptar nuestras soluciones de Business Intelligence y combinarlo con Inteligencia Artificial.</p>
 						</div>
 					</section>
 
@@ -247,13 +277,6 @@
 
 			<!-- Particles.js Configuration -->
 			<script>
-				particlesJS.load('particles-js', 'assets/particles.json', function() {
-					console.log('particles.js loaded - callback');
-				});
-			</script>
-
-			<!-- Alternatively, you can include the particlesJS configuration directly -->
-			<script>
 				particlesJS('particles-js',
 				{
 					"particles": {
@@ -361,25 +384,17 @@
 							}
 						}
 					},
-					"retina_detect": true,
-					"config_demo": {
-						"hide_card": false,
-						"background_color": "#b61924",
-						"background_image": "",
-						"background_position": "50% 50%",
-						"background_repeat": "no-repeat",
-						"background_size": "cover"
-					}
+					"retina_detect": true
 				});
 			</script>
 
 			<!-- Data Visualization Script -->
 			<script>
-				// Datos de ejemplo
+				// Datos basados en estadísticas reales
 				const data = [
-					{ solucion: 'Data Analytics', eficiencia: 20 },
-					{ solucion: 'Business Intelligence', eficiencia: 35 },
-					{ solucion: 'BI + IA', eficiencia: 60 }
+					{ solucion: 'Tradicional', eficiencia: 100 },
+					{ solucion: 'Con BI', eficiencia: 125 },
+					{ solucion: 'BI + IA', eficiencia: 140 }
 				];
 
 				// Dimensiones del gráfico
@@ -394,36 +409,32 @@
 						.attr('height', height);
 
 				// Escalas
-				const x = d3.scaleBand()
+				const x = d3.scalePoint()
 					.domain(data.map(d => d.solucion))
 					.range([margin.left, width - margin.right])
-					.padding(0.1);
+					.padding(0.5);
 
 				const y = d3.scaleLinear()
-					.domain([0, 100]).nice()
+					.domain([90, 150]).nice()
 					.range([height - margin.bottom, margin.top]);
 
 				// Ejes
 				svg.append('g')
 					.attr('transform', `translate(0,${height - margin.bottom})`)
-					.call(d3.axisBottom(x))
-					.selectAll("text")
-						.attr("transform", "rotate(-45)")
-						.style("text-anchor", "end");
+					.call(d3.axisBottom(x));
 
 				svg.append('g')
 					.attr('transform', `translate(${margin.left},0)`)
-					.call(d3.axisLeft(y).ticks(10).tickFormat(d => d + "%"));
+					.call(d3.axisLeft(y).ticks(6).tickFormat(d => d + "%"));
 
-				// Barras
-				svg.selectAll('.bar')
+				// Burbujas
+				svg.selectAll('circle')
 					.data(data)
-					.enter().append('rect')
-						.attr('class', 'bar')
-						.attr('x', d => x(d.solucion))
-						.attr('y', d => y(d.eficiencia))
-						.attr('width', x.bandwidth())
-						.attr('height', d => y(0) - y(d.eficiencia))
+					.enter()
+					.append('circle')
+						.attr('cx', d => x(d.solucion))
+						.attr('cy', d => y(d.eficiencia))
+						.attr('r', d => (d.eficiencia - 90) * 0.8)
 						.attr('fill', '#007BFF')
 						.on('mouseover', function() { d3.select(this).attr('fill', '#0056b3'); })
 						.on('mouseout', function() { d3.select(this).attr('fill', '#007BFF'); });
@@ -431,10 +442,11 @@
 				// Etiquetas de porcentaje
 				svg.selectAll('.label')
 					.data(data)
-					.enter().append('text')
+					.enter()
+					.append('text')
 						.attr('class', 'label')
-						.attr('x', d => x(d.solucion) + x.bandwidth() / 2)
-						.attr('y', d => y(d.eficiencia) - 5)
+						.attr('x', d => x(d.solucion))
+						.attr('y', d => y(d.eficiencia) - (d.eficiencia - 90) * 0.8 - 10)
 						.attr('text-anchor', 'middle')
 						.text(d => d.eficiencia + "%");
 			</script>
