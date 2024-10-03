@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <!--
     GOVIA INTELLIGENCE - index.html
-    Actualizado con gráfico de burbujas que representa la eficiencia de BI y BI+IA
+    Actualizado con gráfico de barras que representa la eficiencia de BI y BI+IA
 -->
 <html lang="es">
     <head>
@@ -48,9 +48,21 @@
                 width: 100%;
                 height: 100%;
             }
+            /* Estilos para "Powered by IA Generativa" */
+            .powered-by-ia {
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                font-size: 12px;
+                color: rgb(206, 198, 198);
+            }
         </style>
     </head>
     <body class="landing is-preload">
+        <!-- Powered by IA Generativa -->
+        <div class="powered-by-ia">
+            <p>Powered by IA Generativa</p>
+        </div>
 
         <!-- Page Wrapper -->
             <div id="page-wrapper">
@@ -85,7 +97,6 @@
                             <p data-aos="fade-up">Potenciamos tu crecimiento en el sector público y privado<br />
                             con Business Intelligence <br />
                             y soluciones de Inteligencia Artificial.</p>
-                            <p><strong>Powered by IA Generativa</strong></p>
                             <ul class="actions special">
                                 <li><a href="#contacto" class="button primary">Contáctanos</a></li>
                             </ul>
@@ -113,11 +124,12 @@
                     <section id="data-visualization-section" class="wrapper style3" data-aos="fade-up">
                         <div class="inner">
                             <header class="major">
-                                <h2>Mejora de Eficiencia con Nuestras Soluciones</h2>
+                                <h2>Impacto de BI y BI + IA en la Eficiencia Organizacional</h2>
                                 <p>Descubre cómo nuestras soluciones potencian la eficiencia en tu organización.</p>
                             </header>
                             <div id="d3-graph-container"></div> <!-- Aquí irá el gráfico -->
-                            <p>Este gráfico muestra cómo la implementación de BI y la combinación de BI con IA puede mejorar la eficiencia en el manejo de datos y procesos dentro de una organización.</p>
+                            <p>Este gráfico muestra el aumento en la eficiencia de las organizaciones al implementar BI y al combinar BI con IA, basado en datos de estudios recientes.</p>
+                            <p><small>Fuente: McKinsey Global Institute, "The Age of Analytics: Competing in a Data-Driven World" (2016).</small></p>
                         </div>
                     </section>
 
@@ -389,63 +401,75 @@
                 });
             </script>
 
-            <!-- D3.js Bubble Chart Script -->
+            <!-- D3.js Bar Chart Script -->
             <script>
-                // Datos para el gráfico de burbujas
+                // Datos para el gráfico de barras
                 const data = [
-                    { name: "BI", efficiency: 25 },
-                    { name: "BI + IA", efficiency: 40 }
+                    { name: "No uso de datos", efficiency: 100 },
+                    { name: "Uso de BI", efficiency: 125 },
+                    { name: "Uso de BI + IA", efficiency: 175 }
                 ];
 
-                const width = 600;
-                const height = 400;
+                // Dimensiones y márgenes
+                const margin = { top: 50, right: 30, bottom: 70, left: 60 },
+                    width = 600 - margin.left - margin.right,
+                    height = 400 - margin.top - margin.bottom;
 
+                // Crear el SVG
                 const svg = d3.select("#d3-graph-container")
                     .append("svg")
-                    .attr("width", width)
-                    .attr("height", height);
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
+                    .append("g")
+                    .attr("transform",
+                        "translate(" + margin.left + "," + margin.top + ")");
 
-                const radiusScale = d3.scaleSqrt()
-                    .domain([0, 50]) // Asumiendo que la eficiencia máxima es 50%
-                    .range([0, 100]);
+                // Eje X
+                const x = d3.scaleBand()
+                    .range([0, width])
+                    .domain(data.map(d => d.name))
+                    .padding(0.2);
 
-                const centers = [
-                    { x: width / 3, y: height / 2 },
-                    { x: 2 * width / 3, y: height / 2 }
-                ];
+                svg.append("g")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(d3.axisBottom(x))
+                    .selectAll("text")
+                    .attr("transform", "translate(0,5)")
+                    .style("text-anchor", "middle");
 
-                // Crear las burbujas
-                svg.selectAll("circle")
+                // Eje Y
+                const y = d3.scaleLinear()
+                    .domain([0, 200])
+                    .range([height, 0]);
+
+                svg.append("g")
+                    .call(d3.axisLeft(y));
+
+                // Barras
+                svg.selectAll("mybar")
                     .data(data)
                     .enter()
-                    .append("circle")
-                    .attr("cx", (d, i) => centers[i].x)
-                    .attr("cy", (d, i) => centers[i].y)
-                    .attr("r", d => radiusScale(d.efficiency))
-                    .attr("fill", (d, i) => i === 0 ? "#007BFF" : "#00BFFF")
+                    .append("rect")
+                    .attr("x", d => x(d.name))
+                    .attr("y", d => y(d.efficiency))
+                    .attr("width", x.bandwidth())
+                    .attr("height", d => height - y(d.efficiency))
+                    .attr("fill", "#007BFF")
                     .on('mouseover', function() { d3.select(this).attr('fill', '#0056b3'); })
-                    .on('mouseout', function(d, i) { d3.select(this).attr('fill', i === 0 ? "#007BFF" : "#00BFFF"); });
+                    .on('mouseout', function() { d3.select(this).attr('fill', '#007BFF'); });
 
-                // Añadir etiquetas
-                const texts = svg.selectAll("text")
+                // Etiquetas de valor
+                svg.selectAll("text.label")
                     .data(data)
                     .enter()
                     .append("text")
-                    .attr("x", (d, i) => centers[i].x)
-                    .attr("y", (d, i) => centers[i].y)
+                    .attr("class", "label")
+                    .attr("x", d => x(d.name) + x.bandwidth() / 2)
+                    .attr("y", d => y(d.efficiency) - 5)
                     .attr("text-anchor", "middle")
-                    .style("fill", "#fff")
-                    .style("font-size", "16px");
-
-                texts.append("tspan")
-                    .attr("x", (d, i) => centers[i].x)
-                    .attr("dy", "-0.5em")
-                    .text(d => d.name);
-
-                texts.append("tspan")
-                    .attr("x", (d, i) => centers[i].x)
-                    .attr("dy", "1.2em")
-                    .text(d => d.efficiency + "%");
+                    .text(d => d.efficiency + "%")
+                    .style("fill", "#000")
+                    .style("font-size", "14px");
             </script>
 
             <!-- Portfolio Script -->
@@ -518,3 +542,4 @@
 
     </body>
 </html>
+
