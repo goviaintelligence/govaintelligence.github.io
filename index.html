@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <!--
 	GOVIA INTELLIGENCE - index.html
-	Actualizado con modificaciones solicitadas
+	Actualizado con Zoomable Circle Packing y resumen de beneficios
 -->
 <html lang="es">
 	<head>
@@ -112,11 +112,11 @@
 					<section id="data-visualization-section" class="wrapper style3" data-aos="fade-up">
 						<div class="inner">
 							<header class="major">
-								<h2>Impacto de Nuestras Soluciones en la Eficiencia</h2>
-								<p>Según estudios de <a href="https://www.mckinsey.com" target="_blank">McKinsey</a> y <a href="https://www.gartner.com" target="_blank">Gartner</a>, la implementación de BI e IA puede mejorar significativamente la eficiencia operativa.</p>
+								<h2>Beneficios de la Convergencia entre IA y BI</h2>
+								<p>Descubre cómo la integración de Inteligencia Artificial con Business Intelligence puede impulsar tu organización.</p>
 							</header>
 							<div id="data-visualization"></div>
-							<p>Este gráfico muestra cómo las organizaciones pueden mejorar su eficiencia al adoptar nuestras soluciones de Business Intelligence y combinarlo con Inteligencia Artificial.</p>
+							<p>La convergencia entre IA y BI permite automatizar procesos, obtener insights más profundos, mejorar la toma de decisiones y obtener ventajas competitivas significativas.</p>
 						</div>
 					</section>
 
@@ -390,65 +390,118 @@
 
 			<!-- Data Visualization Script -->
 			<script>
-				// Datos basados en estadísticas reales
-				const data = [
-					{ solucion: 'Tradicional', eficiencia: 100 },
-					{ solucion: 'Con BI', eficiencia: 125 },
-					{ solucion: 'BI + IA', eficiencia: 140 }
-				];
+				// Datos para el gráfico de Zoomable Circle Packing
+				const data = {
+					"name": "Beneficios",
+					"children": [
+						{
+							"name": "Automatización de Procesos",
+							"children": [
+								{"name": "Eficiencia Operativa"},
+								{"name": "Reducción de Costos"}
+							]
+						},
+						{
+							"name": "Insights Profundos",
+							"children": [
+								{"name": "Análisis Predictivo"},
+								{"name": "Tendencias Ocultas"}
+							]
+						},
+						{
+							"name": "Mejora en Toma de Decisiones",
+							"children": [
+								{"name": "Decisiones Basadas en Datos"},
+								{"name": "Estrategias Personalizadas"}
+							]
+						},
+						{
+							"name": "Ventaja Competitiva",
+							"children": [
+								{"name": "Innovación Continua"},
+								{"name": "Adaptabilidad al Mercado"}
+							]
+						}
+					]
+				};
 
-				// Dimensiones del gráfico
 				const width = 600;
-				const height = 400;
-				const margin = { top: 20, right: 20, bottom: 50, left: 60 };
+				const height = 600;
+				const color = d3.scaleOrdinal(d3.schemeCategory10);
 
-				// Crear el SVG
-				const svg = d3.select('#data-visualization')
-					.append('svg')
-						.attr('width', width)
-						.attr('height', height);
+				const pack = data => d3.pack()
+					.size([width, height])
+					.padding(3)
+					(d3.hierarchy(data)
+					.sum(d => d.value ? d.value : 1)
+					);
 
-				// Escalas
-				const x = d3.scalePoint()
-					.domain(data.map(d => d.solucion))
-					.range([margin.left, width - margin.right])
-					.padding(0.5);
+				const root = pack(data);
 
-				const y = d3.scaleLinear()
-					.domain([90, 150]).nice()
-					.range([height - margin.bottom, margin.top]);
+				const svg = d3.select("#data-visualization").append("svg")
+					.attr("viewBox", [0, 0, width, height])
+					.style("display", "block")
+					.style("margin", "0 auto")
+					.style("background", "#f7f7f7")
+					.style("cursor", "pointer");
 
-				// Ejes
-				svg.append('g')
-					.attr('transform', `translate(0,${height - margin.bottom})`)
-					.call(d3.axisBottom(x));
+				let focus = root;
+				let view;
 
-				svg.append('g')
-					.attr('transform', `translate(${margin.left},0)`)
-					.call(d3.axisLeft(y).ticks(6).tickFormat(d => d + "%"));
+				const node = svg.append("g")
+					.selectAll("circle")
+					.data(root.descendants())
+					.join("circle")
+						.attr("fill", d => d.children ? color(d.depth) : "white")
+						.attr("pointer-events", d => !d.children ? "none" : null)
+						.on("mouseover", function() { d3.select(this).attr("stroke", "#000"); })
+						.on("mouseout", function() { d3.select(this).attr("stroke", null); })
+						.on("click", (event, d) => focus !== d && (zoom(event, d), event.stopPropagation()));
 
-				// Burbujas
-				svg.selectAll('circle')
-					.data(data)
-					.enter()
-					.append('circle')
-						.attr('cx', d => x(d.solucion))
-						.attr('cy', d => y(d.eficiencia))
-						.attr('r', d => (d.eficiencia - 90) * 0.8)
-						.attr('fill', '#007BFF')
-						.on('mouseover', function() { d3.select(this).attr('fill', '#0056b3'); })
-						.on('mouseout', function() { d3.select(this).attr('fill', '#007BFF'); });
+				const label = svg.append("g")
+					.style("font", "16px sans-serif")
+					.attr("text-anchor", "middle")
+					.selectAll("text")
+					.data(root.descendants())
+					.join("text")
+						.style("fill-opacity", d => d.parent === root ? 1 : 0)
+						.style("display", d => d.parent === root ? "inline" : "none")
+						.text(d => d.data.name);
 
-				// Etiquetas de porcentaje
-				svg.selectAll('.label')
-					.data(data)
-					.enter()
-					.append('text')
-						.attr('class', 'label')
-						.attr('x', d => x(d.solucion))
-						.attr('y', d => y(d.eficiencia) - (d.eficiencia - 90) * 0.8 - 10)
-						.attr('text-anchor', 'middle')
-						.text(d => d.eficiencia + "%");
+				svg.on("click", (event) => zoom(event, root));
+
+				zoomTo([root.x, root.y, root.r * 2]);
+
+				function zoom(event, d) {
+					const focus0 = focus;
+
+					focus = d;
+
+					const transition = svg.transition()
+						.duration(event.altKey ? 7500 : 750)
+						.tween("zoom", d => {
+							const i = d3.interpolateZoom(view, [focus.x, focus.y, focus.r * 2]);
+							return t => zoomTo(i(t));
+						});
+
+					label
+						.filter(function(d) { return d.parent === focus || this.style.display === "inline"; })
+						.transition(transition)
+						.style("fill-opacity", d => d.parent === focus ? 1 : 0)
+						.on("start", function(d) { if (d.parent === focus) this.style.display = "inline"; })
+						.on("end", function(d) { if (d.parent !== focus) this.style.display = "none"; });
+				}
+
+				function zoomTo(v) {
+					const k = width / v[2];
+
+					view = v;
+
+					node.attr("transform", d => `translate(${(d.x - v[0]) * k},${(d.y - v[1]) * k})`);
+					node.attr("r", d => d.r * k);
+
+					label.attr("transform", d => `translate(${(d.x - v[0]) * k},${(d.y - v[1]) * k})`);
+				}
 			</script>
 
 			<!-- Portfolio Script -->
@@ -475,13 +528,13 @@
 
 			<!-- Map Script -->
 			<script>
-				var map = L.map('map').setView([-32.892697322536584, -68.84634852390323], 13); // Coordenadas de ejemplo (Buenos Aires)
+				var map = L.map('map').setView([-34.6037, -58.3816], 13); // Coordenadas de ejemplo (Buenos Aires)
 
 				L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 					attribution: '&copy; OpenStreetMap contributors'
 				}).addTo(map);
 
-				L.marker([-32.8927379, -68.84637]).addTo(map)
+				L.marker([-34.6037, -58.3816]).addTo(map)
 					.bindPopup('Nuestra Ubicación')
 					.openPopup();
 			</script>
