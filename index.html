@@ -1,11 +1,11 @@
 <!DOCTYPE HTML>
 <!--
     GOVIA INTELLIGENCE - index.html
-    Actualizado con gráfico de barras que representa la eficiencia de BI y BI+IA
+    Actualizado con Chord Diagram que representa los beneficios de BI, IA y BI + IA
 -->
 <html lang="es">
     <head>
-        <title>GOVIA INTELLIGENCE</title>
+        <title>GovIA Intelligence</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
         <!-- CSS -->
@@ -14,7 +14,14 @@
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
         <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
         <!-- JavaScript Libraries -->
-        <script src="https://d3js.org/d3.v7.min.js"></script>
+        <script src="https://d3js.org/d3.v6.min.js"></script>
+        <script src="https://unpkg.com/d3-chord@1"></script>
+        <script src="https://unpkg.com/d3-array@2"></script>
+        <script src="https://unpkg.com/d3-scale@3"></script>
+        <script src="https://unpkg.com/d3-shape@1"></script>
+        <script src="https://unpkg.com/d3-path@1"></script>
+        <script src="https://unpkg.com/d3-format@1"></script>
+        <script src="https://unpkg.com/d3-color@1"></script>
         <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
         <script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>
         <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
@@ -54,14 +61,30 @@
                 top: 10px;
                 left: 10px;
                 font-size: 12px;
-                color: rgb(216, 213, 213);
+                color: grey;
+            }
+            /* Estilos para el Chord Diagram */
+            #d3-graph-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+            .tooltip {
+                position: absolute;
+                text-align: center;
+                padding: 8px;
+                font-size: 14px;
+                background: rgba(0, 0, 0, 0.7);
+                color: #fff;
+                border-radius: 4px;
+                pointer-events: none;
             }
         </style>
     </head>
     <body class="landing is-preload">
         <!-- Powered by IA Generativa -->
         <div class="powered-by-ia">
-            <p>Powered by IA Generativa</p>
+            <p>Powered by generative AI</p>
         </div>
 
         <!-- Page Wrapper -->
@@ -124,12 +147,12 @@
                     <section id="data-visualization-section" class="wrapper style3" data-aos="fade-up">
                         <div class="inner">
                             <header class="major">
-                                <h2>Impacto de BI y BI + IA en la Eficiencia Organizacional</h2>
-                                <p>Descubre cómo nuestras soluciones potencian la eficiencia en tu organización.</p>
+                                <h2>Beneficios de Implementar BI, IA y BI + IA</h2>
+                                <p>Explora cómo estos enfoques se interconectan y potencian tu organización.</p>
                             </header>
                             <div id="d3-graph-container"></div> <!-- Aquí irá el gráfico -->
-                            <p>Este gráfico muestra el aumento en la eficiencia de las organizaciones al implementar BI y al combinar BI con IA, basado en datos de estudios recientes.</p>
-                            <p><small>Fuente: McKinsey Global Institute, "The Age of Analytics: Competing in a Data-Driven World" (2016).</small></p>
+                            <p>Este gráfico muestra las interrelaciones entre los beneficios de implementar Business Intelligence, soluciones de Inteligencia Artificial y la convergencia de ambas tecnologías.</p>
+                            <p><small>Fuente: Investigación interna de GOVIA INTELLIGENCE (2023).</small></p>
                         </div>
                     </section>
 
@@ -401,75 +424,102 @@
                 });
             </script>
 
-            <!-- D3.js Bar Chart Script -->
+            <!-- D3.js Chord Diagram Script -->
             <script>
-                // Datos para el gráfico de barras
-                const data = [
-                    { name: "No uso de datos", efficiency: 100 },
-                    { name: "Uso de BI", efficiency: 125 },
-                    { name: "Uso de BI + IA", efficiency: 175 }
+                // Datos para el Chord Diagram
+                const benefits = ["BI", "IA", "BI + IA", "Mejora de Decisiones", "Eficiencia Operativa", "Innovación", "Automatización", "Análisis Predictivo"];
+
+                // Matriz de conexiones (simulada)
+                const matrix = [
+                    // BI, IA, BI+IA, Mejora Decisiones, Eficiencia, Innovación, Automatización, Análisis Predictivo
+                    [0,  10, 20,  30,  40,  0,   0,   0], // BI
+                    [10, 0,  30,  0,   0,   40,  50,  60], // IA
+                    [20, 30, 0,   70,  80,  90,  100, 110], // BI + IA
+                    [30, 0,  70,  0,   0,   0,   0,   0], // Mejora de Decisiones
+                    [40, 0,  80,  0,   0,   0,   0,   0], // Eficiencia Operativa
+                    [0,  40, 90,  0,   0,   0,   0,   0], // Innovación
+                    [0,  50, 100, 0,   0,   0,   0,   0], // Automatización
+                    [0,  60, 110, 0,   0,   0,   0,   0], // Análisis Predictivo
                 ];
 
-                // Dimensiones y márgenes
-                const margin = { top: 50, right: 30, bottom: 70, left: 60 },
-                    width = 600 - margin.left - margin.right,
-                    height = 400 - margin.top - margin.bottom;
+                const colors = d3.schemeCategory10;
 
-                // Crear el SVG
+                const width = 600;
+                const height = 600;
+                const innerRadius = Math.min(width, height) * 0.4;
+                const outerRadius = innerRadius + 10;
+
+                const chord = d3.chord()
+                    .padAngle(0.05)
+                    .sortSubgroups(d3.descending);
+
+                const arc = d3.arc()
+                    .innerRadius(innerRadius)
+                    .outerRadius(outerRadius);
+
+                const ribbon = d3.ribbon()
+                    .radius(innerRadius);
+
+                const color = d3.scaleOrdinal()
+                    .domain(d3.range(benefits.length))
+                    .range(colors);
+
                 const svg = d3.select("#d3-graph-container")
                     .append("svg")
-                    .attr("width", width + margin.left + margin.right)
-                    .attr("height", height + margin.top + margin.bottom)
+                    .attr("width", width)
+                    .attr("height", height)
                     .append("g")
-                    .attr("transform",
-                        "translate(" + margin.left + "," + margin.top + ")");
+                    .attr("transform", `translate(${width / 2},${height / 2})`);
 
-                // Eje X
-                const x = d3.scaleBand()
-                    .range([0, width])
-                    .domain(data.map(d => d.name))
-                    .padding(0.2);
+                const chords = chord(matrix);
 
+                // Arcos externos
                 svg.append("g")
-                    .attr("transform", "translate(0," + height + ")")
-                    .call(d3.axisBottom(x))
-                    .selectAll("text")
-                    .attr("transform", "translate(0,5)")
-                    .style("text-anchor", "middle");
-
-                // Eje Y
-                const y = d3.scaleLinear()
-                    .domain([0, 200])
-                    .range([height, 0]);
-
-                svg.append("g")
-                    .call(d3.axisLeft(y));
-
-                // Barras
-                svg.selectAll("mybar")
-                    .data(data)
+                    .selectAll("path")
+                    .data(chords.groups)
                     .enter()
-                    .append("rect")
-                    .attr("x", d => x(d.name))
-                    .attr("y", d => y(d.efficiency))
-                    .attr("width", x.bandwidth())
-                    .attr("height", d => height - y(d.efficiency))
-                    .attr("fill", "#007BFF")
-                    .on('mouseover', function() { d3.select(this).attr('fill', '#0056b3'); })
-                    .on('mouseout', function() { d3.select(this).attr('fill', '#007BFF'); });
+                    .append("path")
+                    .style("fill", d => color(d.index))
+                    .style("stroke", d => d3.rgb(color(d.index)).darker())
+                    .attr("d", arc);
 
-                // Etiquetas de valor
-                svg.selectAll("text.label")
-                    .data(data)
+                // Cintas internas
+                svg.append("g")
+                    .selectAll("path")
+                    .data(chords)
+                    .enter()
+                    .append("path")
+                    .attr("d", ribbon)
+                    .style("fill", d => color(d.target.index))
+                    .style("stroke", d => d3.rgb(color(d.target.index)).darker())
+                    .on("mouseover", function(event, d) {
+                        tooltip.transition().duration(200).style("opacity", 0.9);
+                        tooltip.html(`${benefits[d.source.index]} &rarr; ${benefits[d.target.index]}: ${matrix[d.source.index][d.target.index]}`)
+                            .style("left", (event.pageX + 10) + "px")
+                            .style("top", (event.pageY - 28) + "px");
+                    })
+                    .on("mouseout", function() {
+                        tooltip.transition().duration(500).style("opacity", 0);
+                    });
+
+                // Añadir etiquetas
+                svg.append("g")
+                    .selectAll("text")
+                    .data(chords.groups)
                     .enter()
                     .append("text")
-                    .attr("class", "label")
-                    .attr("x", d => x(d.name) + x.bandwidth() / 2)
-                    .attr("y", d => y(d.efficiency) - 5)
-                    .attr("text-anchor", "middle")
-                    .text(d => d.efficiency + "%")
-                    .style("fill", "#000")
-                    .style("font-size", "14px");
+                    .each(function(d) { d.angle = (d.startAngle + d.endAngle) / 2; })
+                    .attr("dy", ".35em")
+                    .attr("transform", function(d) {
+                        return `rotate(${d.angle * 180 / Math.PI - 90}) translate(${outerRadius + 10})${d.angle > Math.PI ? "rotate(180)" : ""}`;
+                    })
+                    .attr("text-anchor", d => d.angle > Math.PI ? "end" : null)
+                    .text(d => benefits[d.index]);
+
+                // Tooltip
+                const tooltip = d3.select("body").append("div")
+                    .attr("class", "tooltip")
+                    .style("opacity", 0);
             </script>
 
             <!-- Portfolio Script -->
