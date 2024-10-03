@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <!--
 	GOVIA INTELLIGENCE - index.html
-	Actualizado con mejoras de JavaScript y contenido
+	Actualizado con particles.js y nueva visualización D3.js
 -->
 <html lang="es">
 	<head>
@@ -18,8 +18,13 @@
 		<script src="https://unpkg.com/aos@next/dist/aos.js"></script>
 		<script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>
 		<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+		<!-- Particles.js Library -->
+		<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 	</head>
 	<body class="landing is-preload">
+
+		<!-- Particles.js Container -->
+		<div id="particles-js"></div>
 
 		<!-- Page Wrapper -->
 			<div id="page-wrapper">
@@ -34,8 +39,8 @@
 									<div id="menu">
 										<ul>
 											<li><a href="index.html">Inicio</a></li>
-											<li><a href="servicios.html">Servicios</a></li>
-											<li><a href="portfolio.html">Portfolio</a></li>
+											<li><a href="Servicios.html">Servicios</a></li>
+											<li><a href="Portfolio.html">Portfolio</a></li>
 											<li><a href="contacto.html">Contacto</a></li>
 										</ul>
 									</div>
@@ -78,8 +83,8 @@
 					<section id="data-visualization-section" class="wrapper style3" data-aos="fade-up">
 						<div class="inner">
 							<header class="major">
-								<h2>Nuestras Estadísticas</h2>
-								<p>Un vistazo a nuestros servicios más solicitados.</p>
+								<h2>Mejora de Eficiencia con Nuestras Soluciones</h2>
+								<p>Descubre cómo nuestras soluciones potencian la eficiencia en tu organización.</p>
 							</header>
 							<div id="data-visualization"></div>
 						</div>
@@ -240,15 +245,141 @@
 				});
 			</script>
 
+			<!-- Particles.js Configuration -->
+			<script>
+				particlesJS.load('particles-js', 'assets/particles.json', function() {
+					console.log('particles.js loaded - callback');
+				});
+			</script>
+
+			<!-- Alternatively, you can include the particlesJS configuration directly -->
+			<script>
+				particlesJS('particles-js',
+				{
+					"particles": {
+						"number": {
+							"value": 80,
+							"density": {
+								"enable": true,
+								"value_area": 800
+							}
+						},
+						"color": {
+							"value": "#ffffff"
+						},
+						"shape": {
+							"type": "circle",
+							"stroke": {
+								"width": 0,
+								"color": "#000000"
+							},
+							"polygon": {
+								"nb_sides": 5
+							},
+							"image": {
+								"src": "img/github.svg",
+								"width": 100,
+								"height": 100
+							}
+						},
+						"opacity": {
+							"value": 0.5,
+							"random": false,
+							"anim": {
+								"enable": false,
+								"speed": 1,
+								"opacity_min": 0.1,
+								"sync": false
+							}
+						},
+						"size": {
+							"value": 3,
+							"random": true,
+							"anim": {
+								"enable": false,
+								"speed": 40,
+								"size_min": 0.1,
+								"sync": false
+							}
+						},
+						"line_linked": {
+							"enable": true,
+							"distance": 150,
+							"color": "#ffffff",
+							"opacity": 0.4,
+							"width": 1
+						},
+						"move": {
+							"enable": true,
+							"speed": 6,
+							"direction": "none",
+							"random": false,
+							"straight": false,
+							"out_mode": "out",
+							"attract": {
+								"enable": false,
+								"rotateX": 600,
+								"rotateY": 1200
+							}
+						}
+					},
+					"interactivity": {
+						"detect_on": "canvas",
+						"events": {
+							"onhover": {
+								"enable": true,
+								"mode": "repulse"
+							},
+							"onclick": {
+								"enable": true,
+								"mode": "push"
+							},
+							"resize": true
+						},
+						"modes": {
+							"grab": {
+								"distance": 400,
+								"line_linked": {
+									"opacity": 1
+								}
+							},
+							"bubble": {
+								"distance": 400,
+								"size": 40,
+								"duration": 2,
+								"opacity": 8,
+								"speed": 3
+							},
+							"repulse": {
+								"distance": 200
+							},
+							"push": {
+								"particles_nb": 4
+							},
+							"remove": {
+								"particles_nb": 2
+							}
+						}
+					},
+					"retina_detect": true,
+					"config_demo": {
+						"hide_card": false,
+						"background_color": "#b61924",
+						"background_image": "",
+						"background_position": "50% 50%",
+						"background_repeat": "no-repeat",
+						"background_size": "cover"
+					}
+				});
+			</script>
+
 			<!-- Data Visualization Script -->
 			<script>
 				// Datos de ejemplo
 				const data = [
-					{ servicio: 'BI', clientes: 30 },
-					{ servicio: 'IA', clientes: 20 },
-					{ servicio: 'Consultoría', clientes: 15 },
-					{ servicio: 'Sector Público', clientes: 25 },
-					{ servicio: 'Sector Privado', clientes: 35 }
+					{ solucion: 'Data Analytics', eficiencia: 20 },
+					{ solucion: 'Business Intelligence', eficiencia: 35 },
+					{ solucion: 'BI + IA', eficiencia: 60 }
 				];
 
 				// Dimensiones del gráfico
@@ -264,12 +395,12 @@
 
 				// Escalas
 				const x = d3.scaleBand()
-					.domain(data.map(d => d.servicio))
+					.domain(data.map(d => d.solucion))
 					.range([margin.left, width - margin.right])
 					.padding(0.1);
 
 				const y = d3.scaleLinear()
-					.domain([0, d3.max(data, d => d.clientes)]).nice()
+					.domain([0, 100]).nice()
 					.range([height - margin.bottom, margin.top]);
 
 				// Ejes
@@ -282,20 +413,30 @@
 
 				svg.append('g')
 					.attr('transform', `translate(${margin.left},0)`)
-					.call(d3.axisLeft(y));
+					.call(d3.axisLeft(y).ticks(10).tickFormat(d => d + "%"));
 
 				// Barras
 				svg.selectAll('.bar')
 					.data(data)
 					.enter().append('rect')
 						.attr('class', 'bar')
-						.attr('x', d => x(d.servicio))
-						.attr('y', d => y(d.clientes))
+						.attr('x', d => x(d.solucion))
+						.attr('y', d => y(d.eficiencia))
 						.attr('width', x.bandwidth())
-						.attr('height', d => y(0) - y(d.clientes))
+						.attr('height', d => y(0) - y(d.eficiencia))
 						.attr('fill', '#007BFF')
 						.on('mouseover', function() { d3.select(this).attr('fill', '#0056b3'); })
 						.on('mouseout', function() { d3.select(this).attr('fill', '#007BFF'); });
+
+				// Etiquetas de porcentaje
+				svg.selectAll('.label')
+					.data(data)
+					.enter().append('text')
+						.attr('class', 'label')
+						.attr('x', d => x(d.solucion) + x.bandwidth() / 2)
+						.attr('y', d => y(d.eficiencia) - 5)
+						.attr('text-anchor', 'middle')
+						.text(d => d.eficiencia + "%");
 			</script>
 
 			<!-- Portfolio Script -->
