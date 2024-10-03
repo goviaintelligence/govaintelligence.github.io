@@ -1,16 +1,23 @@
 <!DOCTYPE HTML>
 <!--
-	GovIA Intelligence by HTML5 UP
-	html5up.net | @ajlkn
-	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+	GOVIA INTELLIGENCE - index.html
+	Actualizado con mejoras de JavaScript y contenido
 -->
-<html>
+<html lang="es">
 	<head>
-		<title>GovIA Intelligence</title>
+		<title>GOVIA INTELLIGENCE</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<!-- CSS -->
 		<link rel="stylesheet" href="assets/css/main.css" />
+		<link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		<!-- JavaScript Libraries -->
+		<script src="https://d3js.org/d3.v7.min.js"></script>
+		<script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+		<script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>
+		<script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
 	</head>
 	<body class="landing is-preload">
 
@@ -19,7 +26,7 @@
 
 				<!-- Header -->
 					<header id="header" class="alt">
-						<h1><a href="index.html">GovIA Intelligence</a></h1>
+						<h1><a href="index.html">GOVIA INTELLIGENCE</a></h1>
 						<nav id="nav">
 							<ul>
 								<li class="special">
@@ -40,8 +47,8 @@
 				<!-- Banner -->
 					<section id="banner">
 						<div class="inner">
-							<h2>GovIA Intelligence</h2>
-							<p>Potenciamos tu crecimiento en el sector público y privado<br />
+							<h2 data-aos="fade-down">GOVIA INTELLIGENCE</h2>
+							<p data-aos="fade-up">Potenciamos tu crecimiento en el sector público y privado<br />
 							con Business Intelligence <br />
 							y soluciones de Inteligencia Artificial.</p>
 							<ul class="actions special">
@@ -52,12 +59,12 @@
 					</section>
 
 				<!-- One -->
-					<section id="one" class="wrapper style1 special">
+					<section id="one" class="wrapper style1 special" data-aos="fade-up">
 						<div class="inner">
 							<header class="major">
 								<h2>Expertos en Datos y Tecnología<br />
 									para el Sector Público y Privado</h2>
-								<p>En GOVIA INTELLIGENCE, combinamos experiencia en Business Intelligence y aplicaciones de Inteligencia Artificial para ofrecer soluciones que impulsan la innovación y la eficiencia en tu organización. Nuestro equipo proviene de áreas clave del sector público, incluyendo la administración de la institución más grande de la provincia, la Dirección General de Escuelas (DGE), lo que nos brinda una perspectiva única para atender tanto al sector público como al privado.</p>
+								<p>En GOVIA INTELLIGENCE, combinamos nuestra experiencia en Business Intelligence y aplicaciones de Inteligencia Artificial para ofrecer soluciones que impulsan la innovación y la eficiencia en tu organización. <strong>Nuestro equipo está constituido por profesionales con abundante experiencia en áreas clave del sector público</strong>, incluyendo la administración de la institución más grande de la provincia, la Dirección General de Escuelas (DGE). Esta trayectoria nos brinda una perspectiva única para atender tanto al sector público como al privado.</p>
 							</header>
 							<ul class="icons major">
 								<li><span class="icon solid fa-chart-line major style1"><span class="label">Análisis</span></span></li>
@@ -67,29 +74,68 @@
 						</div>
 					</section>
 
+				<!-- Data Visualization -->
+					<section id="data-visualization-section" class="wrapper style3" data-aos="fade-up">
+						<div class="inner">
+							<header class="major">
+								<h2>Nuestras Estadísticas</h2>
+								<p>Un vistazo a nuestros servicios más solicitados.</p>
+							</header>
+							<div id="data-visualization"></div>
+						</div>
+					</section>
+
 				<!-- Two -->
 					<section id="two" class="wrapper alt style2">
-						<section class="spotlight">
+						<section class="spotlight" data-aos="fade-right">
 							<div class="image"><img src="images/bi.jpg" alt="Business Intelligence" /></div>
 							<div class="content">
 								<h2>Business Intelligence</h2>
 								<p>Transformamos tus datos en información accionable. Diseñamos dashboards interactivos, generamos reportes personalizados y te ayudamos a identificar tendencias clave para tomar decisiones informadas, tanto en el sector público como en el privado.</p>
 							</div>
 						</section>
-						<section class="spotlight">
+						<section class="spotlight" data-aos="fade-left">
 							<div class="image"><img src="images/ai.jpg" alt="Inteligencia Artificial" /></div>
 							<div class="content">
 								<h2>Aplicaciones de Inteligencia Artificial</h2>
 								<p>Implementamos soluciones de IA que optimizan procesos, mejoran la experiencia del ciudadano y descubren nuevas oportunidades de mejora en la gestión pública y privada. Desde aprendizaje automático hasta procesamiento de lenguaje natural, te acompañamos en la transformación digital.</p>
 							</div>
 						</section>
-						<section class="spotlight">
+						<section class="spotlight" data-aos="fade-right">
 							<div class="image"><img src="images/consulting.jpg" alt="Consultoría Estratégica" /></div>
 							<div class="content">
 								<h2>Consultoría Estratégica</h2>
 								<p>Nuestro equipo de expertos te asesora en la implementación de tecnologías emergentes y en la adaptación a un entorno en constante cambio, asegurando que tu organización se mantenga competitiva y eficiente, ya sea en el ámbito público o privado.</p>
 							</div>
 						</section>
+					</section>
+
+				<!-- Portfolio -->
+					<section id="portfolio" class="wrapper style2">
+						<div class="inner">
+							<header class="major">
+								<h2>Portfolio</h2>
+								<p>Explora algunos de nuestros proyectos destacados.</p>
+							</header>
+							<div class="filters">
+								<button data-filter="*" class="active">Mostrar Todos</button>
+								<button data-filter=".publico">Sector Público</button>
+								<button data-filter=".privado">Sector Privado</button>
+							</div>
+							<div class="grid">
+								<div class="element-item publico">
+									<div class="image"><img src="images/project1.jpg" alt="Proyecto 1" /></div>
+									<h3>Proyecto en el Sector Público</h3>
+									<p>Descripción breve del proyecto.</p>
+								</div>
+								<div class="element-item privado">
+									<div class="image"><img src="images/project2.jpg" alt="Proyecto 2" /></div>
+									<h3>Proyecto en el Sector Privado</h3>
+									<p>Descripción breve del proyecto.</p>
+								</div>
+								<!-- Más elementos -->
+							</div>
+						</div>
 					</section>
 
 				<!-- Benefits -->
@@ -127,17 +173,40 @@
 						</div>
 					</section>
 
-				<!-- Call to Action -->
-					<section id="cta" class="wrapper style4">
+				<!-- Map Section -->
+					<section id="map-section" class="wrapper style3" data-aos="fade-up">
 						<div class="inner">
-							<header>
-								<h2>¿Listo para Impulsar tu Organización?</h2>
-								<p>Contáctanos hoy y descubre cómo podemos ayudarte a alcanzar tus objetivos en el sector público o privado.</p>
+							<header class="major">
+								<h2>Nuestra Ubicación</h2>
+								<p>Visítanos en nuestras oficinas centrales.</p>
 							</header>
-							<ul class="actions stacked">
-								<li><a href="#contacto" class="button fit primary">Contáctanos</a></li>
-								<li><a href="servicios.html" class="button fit">Más Información</a></li>
-							</ul>
+							<div id="map" style="height: 400px;"></div>
+						</div>
+					</section>
+
+				<!-- Contact Form -->
+					<section id="contacto" class="wrapper style1 special">
+						<div class="inner">
+							<header class="major">
+								<h2>Contáctanos</h2>
+								<p>Estamos aquí para ayudarte. Envíanos un mensaje y nos pondremos en contacto contigo.</p>
+							</header>
+							<form id="contact-form">
+								<div class="fields">
+									<div class="field half">
+										<input type="text" name="name" id="name" placeholder="Nombre" required />
+									</div>
+									<div class="field half">
+										<input type="email" name="email" id="email" placeholder="Correo Electrónico" required />
+									</div>
+									<div class="field">
+										<textarea name="message" id="message" placeholder="Mensaje" rows="6" required></textarea>
+									</div>
+								</div>
+								<ul class="actions special">
+									<li><button type="submit" class="button primary">Enviar Mensaje</button></li>
+								</ul>
+							</form>
 						</div>
 					</section>
 
@@ -163,6 +232,139 @@
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
+
+			<!-- Initialize AOS -->
+			<script>
+				AOS.init({
+					duration: 1000,
+				});
+			</script>
+
+			<!-- Data Visualization Script -->
+			<script>
+				// Datos de ejemplo
+				const data = [
+					{ servicio: 'BI', clientes: 30 },
+					{ servicio: 'IA', clientes: 20 },
+					{ servicio: 'Consultoría', clientes: 15 },
+					{ servicio: 'Sector Público', clientes: 25 },
+					{ servicio: 'Sector Privado', clientes: 35 }
+				];
+
+				// Dimensiones del gráfico
+				const width = 600;
+				const height = 400;
+				const margin = { top: 20, right: 20, bottom: 50, left: 60 };
+
+				// Crear el SVG
+				const svg = d3.select('#data-visualization')
+					.append('svg')
+						.attr('width', width)
+						.attr('height', height);
+
+				// Escalas
+				const x = d3.scaleBand()
+					.domain(data.map(d => d.servicio))
+					.range([margin.left, width - margin.right])
+					.padding(0.1);
+
+				const y = d3.scaleLinear()
+					.domain([0, d3.max(data, d => d.clientes)]).nice()
+					.range([height - margin.bottom, margin.top]);
+
+				// Ejes
+				svg.append('g')
+					.attr('transform', `translate(0,${height - margin.bottom})`)
+					.call(d3.axisBottom(x))
+					.selectAll("text")
+						.attr("transform", "rotate(-45)")
+						.style("text-anchor", "end");
+
+				svg.append('g')
+					.attr('transform', `translate(${margin.left},0)`)
+					.call(d3.axisLeft(y));
+
+				// Barras
+				svg.selectAll('.bar')
+					.data(data)
+					.enter().append('rect')
+						.attr('class', 'bar')
+						.attr('x', d => x(d.servicio))
+						.attr('y', d => y(d.clientes))
+						.attr('width', x.bandwidth())
+						.attr('height', d => y(0) - y(d.clientes))
+						.attr('fill', '#007BFF')
+						.on('mouseover', function() { d3.select(this).attr('fill', '#0056b3'); })
+						.on('mouseout', function() { d3.select(this).attr('fill', '#007BFF'); });
+			</script>
+
+			<!-- Portfolio Script -->
+			<script>
+				var iso = new Isotope('.grid', {
+					itemSelector: '.element-item',
+					layoutMode: 'fitRows'
+				});
+
+				// Filtrado
+				var filtersElem = document.querySelector('.filters');
+				var filterButtons = filtersElem.querySelectorAll('button');
+
+				filtersElem.addEventListener('click', function(event) {
+					if (!event.target.matches('button')) {
+						return;
+					}
+					filterButtons.forEach(btn => btn.classList.remove('active'));
+					event.target.classList.add('active');
+					var filterValue = event.target.getAttribute('data-filter');
+					iso.arrange({ filter: filterValue });
+				});
+			</script>
+
+			<!-- Map Script -->
+			<script>
+				var map = L.map('map').setView([-34.6037, -58.3816], 13); // Coordenadas de ejemplo (Buenos Aires)
+
+				L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+					attribution: '&copy; OpenStreetMap contributors'
+				}).addTo(map);
+
+				L.marker([-34.6037, -58.3816]).addTo(map)
+					.bindPopup('Nuestra Ubicación')
+					.openPopup();
+			</script>
+
+			<!-- Contact Form Script -->
+			<script>
+				const form = document.getElementById('contact-form');
+
+				form.addEventListener('submit', function(e) {
+					e.preventDefault();
+
+					// Validación básica
+					const name = form.elements['name'].value;
+					const email = form.elements['email'].value;
+					const message = form.elements['message'].value;
+
+					if (name && email && message) {
+						// Enviar datos al servidor o mostrar mensaje de éxito
+						alert('Gracias por contactarnos, ' + name + '. Te responderemos pronto.');
+						form.reset();
+					} else {
+						alert('Por favor, completa todos los campos.');
+					}
+				});
+			</script>
+
+			<!-- Menu Toggle Script -->
+			<script>
+				const menuToggle = document.querySelector('.menuToggle');
+				const menu = document.getElementById('menu');
+
+				menuToggle.addEventListener('click', function(e) {
+					e.preventDefault();
+					menu.classList.toggle('active');
+				});
+			</script>
 
 	</body>
 </html>
