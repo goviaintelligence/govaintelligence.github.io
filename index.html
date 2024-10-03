@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <!--
     GOVIA INTELLIGENCE - index.html
-    Actualizado con Radar Chart que representa los beneficios de IA, BI y BI + IA
+    Actualizado con Radar Chart que incluye leyendas y etiquetas ajustadas
 -->
 <html lang="es">
     <head>
@@ -54,13 +54,14 @@
                 top: 10px;
                 left: 10px;
                 font-size: 12px;
-                color: grey;
+                color: rgb(212, 209, 209);
             }
             /* Estilos para el Radar Chart */
             #d3-graph-container {
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                position: relative;
             }
             .tooltip {
                 position: absolute;
@@ -72,12 +73,21 @@
                 border-radius: 4px;
                 pointer-events: none;
             }
+            /* Estilos para la leyenda */
+            .legend {
+                font-size: 12px;
+                font-weight: bold;
+            }
+            .legend rect {
+                stroke-width: 0;
+                stroke: #fff;
+            }
         </style>
     </head>
     <body class="landing is-preload">
         <!-- Powered by IA Generativa -->
         <div class="powered-by-ia">
-            <p>Powered by IA Generativa</p>
+            <p>Powered by generative AI</p>
         </div>
 
         <!-- Page Wrapper -->
@@ -287,40 +297,40 @@
                 // Datos para el Radar Chart
                 const data = [
                     {
-                        category: "IA",
-                        values: [
+                        name: "IA",
+                        axes: [
                             { axis: "Mejora de Decisiones", value: 70 },
                             { axis: "Eficiencia Operativa", value: 80 },
                             { axis: "Innovación", value: 90 },
                             { axis: "Automatización", value: 85 },
-                            { axis: "Análisis Predictivo", value: 95 }
+                            { axis: "Análisis Predictivo", value: 85 }
                         ]
                     },
                     {
-                        category: "BI",
-                        values: [
+                        name: "BI",
+                        axes: [
                             { axis: "Mejora de Decisiones", value: 60 },
                             { axis: "Eficiencia Operativa", value: 65 },
                             { axis: "Innovación", value: 50 },
                             { axis: "Automatización", value: 40 },
-                            { axis: "Análisis Predictivo", value: 55 }
+                            { axis: "Análisis Predictivo", value: 65 }
                         ]
                     },
                     {
-                        category: "BI + IA",
-                        values: [
+                        name: "BI + IA",
+                        axes: [
                             { axis: "Mejora de Decisiones", value: 90 },
                             { axis: "Eficiencia Operativa", value: 95 },
                             { axis: "Innovación", value: 100 },
                             { axis: "Automatización", value: 95 },
-                            { axis: "Análisis Predictivo", value: 100 }
+                            { axis: "Análisis Predictivo", value: 90 }
                         ]
                     }
                 ];
 
-                const width = 500;
-                const height = 500;
-                const margin = { top: 50, right: 50, bottom: 50, left: 50 };
+                const width = 550;
+                const height = 550;
+                const margin = { top: 50, right: 50, bottom: 50, left: 100 }; // Ajuste del margen izquierdo para la leyenda
 
                 const radarChartOptions = {
                     w: width - margin.left - margin.right,
@@ -330,7 +340,8 @@
                     levels: 5,
                     roundStrokes: true,
                     color: d3.scaleOrdinal().range(["#EDC951", "#CC333F", "#00A0B0"]),
-                    format: '.0f'
+                    format: '.0f',
+                    legend: { title: 'Categorías', translateX: -margin.left + 1, translateY: -20 } // Configuración de la leyenda
                 };
 
                 // Llamar a la función para dibujar el Radar Chart
@@ -344,14 +355,17 @@
                         margin: { top: 20, right: 20, bottom: 20, left: 20 }, //The margins around the circle
                         levels: 3,				//How many levels or inner circles should there be drawn
                         maxValue: 0, 			//What is the value that the biggest circle will represent
-                        labelFactor: 1.15, 	//How much farther than the radius of the outer circle should the labels be placed
-                        wrapWidth: 60, 		//The number of pixels after which a label needs to be given a new line
+                        labelFactor: 1.1, 	//How much farther than the radius of the outer circle should the labels be placed
+                        wrapWidth: 80, 		//The number of pixels after which a label needs to be given a new line
                         opacityArea: 0.35, 	//The opacity of the area of the blob
-                        dotRadius: 4, 			//The size of the colored circles of each blog
+                        dotRadius: 3, 			//The size of the colored circles of each blob
                         opacityCircles: 0.1, 	//The opacity of the circles of each blob
                         strokeWidth: 2, 		//The width of the stroke around each blob
                         roundStrokes: false,	//If true the area and stroke will follow a round path (cardinal-closed)
-                        color: d3.scaleOrdinal(d3.schemeCategory10)	//Color function
+                        color: d3.scaleOrdinal(d3.schemeCategory10),	//Color function
+                        format: '.0%',
+                        unit: '',
+                        legend: false
                     };
 
                     // Overwrite default config with user options
@@ -365,10 +379,10 @@
 
                     // If the supplied maxValue is smaller than the actual one, replace by the max in the data
                     let maxValue = Math.max(cfg.maxValue, d3.max(data, function(i) {
-                        return d3.max(i.values.map(function(o) { return o.value; }));
+                        return d3.max(i.axes.map(function(o) { return o.value; }));
                     }));
 
-                    const allAxis = data[0].values.map(function(i, j) { return i.axis; });
+                    const allAxis = data[0].axes.map(function(i, j) { return i.axis; });
                     const total = allAxis.length;
                     const radius = Math.min(cfg.w / 2, cfg.h / 2);
                     const Format = d3.format(cfg.format);
@@ -419,7 +433,12 @@
                         .attr("dy", "0.4em")
                         .style("font-size", "10px")
                         .attr("fill", "#737373")
-                        .text(function(d) { return Format(maxValue * d / cfg.levels); });
+                        .text(function(d) { return Format(maxValue * d / cfg.levels / 100); });
+
+                    // Scale for the radius
+                    const rScale = d3.scaleLinear()
+                        .range([0, radius])
+                        .domain([0, maxValue]);
 
                     // Draw the axes
                     const axis = axisGrid.selectAll(".axis")
@@ -432,8 +451,8 @@
                     axis.append("line")
                         .attr("x1", 0)
                         .attr("y1", 0)
-                        .attr("x2", function(d, i) { return radius * Math.cos(angleSlice * i - Math.PI / 2); })
-                        .attr("y2", function(d, i) { return radius * Math.sin(angleSlice * i - Math.PI / 2); })
+                        .attr("x2", function(d, i) { return rScale(maxValue * 1.1) * Math.cos(angleSlice * i - Math.PI / 2); })
+                        .attr("y2", function(d, i) { return rScale(maxValue * 1.1) * Math.sin(angleSlice * i - Math.PI / 2); })
                         .attr("class", "line")
                         .style("stroke", "white")
                         .style("stroke-width", "2px");
@@ -441,11 +460,11 @@
                     // Append the labels
                     axis.append("text")
                         .attr("class", "legend")
-                        .style("font-size", "12px")
+                        .style("font-size", "11px")
                         .attr("text-anchor", "middle")
                         .attr("dy", "0.35em")
-                        .attr("x", function(d, i) { return (radius * cfg.labelFactor) * Math.cos(angleSlice * i - Math.PI / 2); })
-                        .attr("y", function(d, i) { return (radius * cfg.labelFactor) * Math.sin(angleSlice * i - Math.PI / 2); })
+                        .attr("x", function(d, i) { return rScale(maxValue * cfg.labelFactor) * Math.cos(angleSlice * i - Math.PI / 2); })
+                        .attr("y", function(d, i) { return rScale(maxValue * cfg.labelFactor) * Math.sin(angleSlice * i - Math.PI / 2); })
                         .text(function(d) { return d; })
                         .call(wrap, cfg.wrapWidth);
 
@@ -459,11 +478,6 @@
                         radarLine.curve(d3.curveCardinalClosed);
                     }
 
-                    // Scale for the radius
-                    const rScale = d3.scaleLinear()
-                        .range([0, radius])
-                        .domain([0, maxValue]);
-
                     // Create a wrapper for the blobs
                     const blobWrapper = g.selectAll(".radarWrapper")
                         .data(data)
@@ -474,7 +488,7 @@
                     blobWrapper
                         .append("path")
                         .attr("class", "radarArea")
-                        .attr("d", function(d) { return radarLine(d.values); })
+                        .attr("d", function(d) { return radarLine(d.axes); })
                         .style("fill", function(d, i) { return cfg.color(i); })
                         .style("fill-opacity", cfg.opacityArea)
                         .on('mouseover', function(event, d) {
@@ -497,7 +511,7 @@
                     // Create the outlines
                     blobWrapper.append("path")
                         .attr("class", "radarStroke")
-                        .attr("d", function(d) { return radarLine(d.values); })
+                        .attr("d", function(d) { return radarLine(d.axes); })
                         .style("stroke-width", cfg.strokeWidth + "px")
                         .style("stroke", function(d, i) { return cfg.color(i); })
                         .style("fill", "none")
@@ -505,14 +519,58 @@
 
                     // Append the circles
                     blobWrapper.selectAll(".radarCircle")
-                        .data(function(d) { return d.values; })
+                        .data(function(d) { return d.axes; })
                         .enter().append("circle")
                         .attr("class", "radarCircle")
                         .attr("r", cfg.dotRadius)
                         .attr("cx", function(d, i) { return rScale(d.value) * Math.cos(angleSlice * i - Math.PI / 2); })
                         .attr("cy", function(d, i) { return rScale(d.value) * Math.sin(angleSlice * i - Math.PI / 2); })
-                        .style("fill", function(d) { return cfg.color(data.indexOf(d3.select(this.parentNode).datum())); })
+                        .style("fill", function(d) {
+                            const parentData = d3.select(this.parentNode).datum();
+                            return cfg.color(data.indexOf(parentData));
+                        })
                         .style("fill-opacity", 0.8);
+
+                    // Leyenda
+                    if (cfg.legend !== false && typeof cfg.legend === "object") {
+                        const legendZone = svg.append('g');
+                        const names = data.map(el => el.name);
+                        if (cfg.legend.title) {
+                            legendZone.append("text")
+                                .attr("class", "title")
+                                .attr('transform', `translate(${cfg.legend.translateX},${cfg.legend.translateY})`)
+                                .attr("x", cfg.w - 70)
+                                .attr("y", 10)
+                                .attr("font-size", "12px")
+                                .attr("fill", "#404040")
+                                .text(cfg.legend.title);
+                        }
+                        const legend = legendZone.append("g")
+                            .attr("class", "legend")
+                            .attr("height", 100)
+                            .attr("width", 200)
+                            .attr('transform', `translate(${cfg.legend.translateX},${cfg.legend.translateY + 20})`);
+                        // Create rectangles markers
+                        legend.selectAll('rect')
+                            .data(names)
+                            .enter()
+                            .append("rect")
+                            .attr("x", cfg.w - 110)
+                            .attr("y", function(d, i) { return i * 20; })
+                            .attr("width", 10)
+                            .attr("height", 10)
+                            .style("fill", function(d, i) { return cfg.color(i); });
+                        // Create labels
+                        legend.selectAll('text')
+                            .data(names)
+                            .enter()
+                            .append("text")
+                            .attr("x", cfg.w - 95)
+                            .attr("y", function(d, i) { return i * 20 + 9; })
+                            .attr("font-size", "11px")
+                            .attr("fill", "#737373")
+                            .text(function(d) { return d; });
+                    }
 
                     // Helper Function to wrap SVG text
                     function wrap(text, width) {
@@ -555,4 +613,3 @@
 
     </body>
 </html>
-
