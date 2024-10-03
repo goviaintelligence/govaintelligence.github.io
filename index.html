@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <!--
 	GOVIA INTELLIGENCE - index.html
-	Actualizado con Zoomable Circle Packing y resumen de beneficios
+	Actualizado con gráfico jerárquico de IA y aclaración "Powered by IA Generativa"
 -->
 <html lang="es">
 	<head>
@@ -85,6 +85,7 @@
 							<p data-aos="fade-up">Potenciamos tu crecimiento en el sector público y privado<br />
 							con Business Intelligence <br />
 							y soluciones de Inteligencia Artificial.</p>
+							<p><strong>Powered by IA Generativa</strong></p>
 							<ul class="actions special">
 								<li><a href="#contacto" class="button primary">Contáctanos</a></li>
 							</ul>
@@ -112,11 +113,10 @@
 					<section id="data-visualization-section" class="wrapper style3" data-aos="fade-up">
 						<div class="inner">
 							<header class="major">
-								<h2>Beneficios de la Convergencia entre IA y BI</h2>
-								<p>Descubre cómo la integración de Inteligencia Artificial con Business Intelligence puede impulsar tu organización.</p>
+								<h2>Gráfico de Inteligencia Artificial y Machine Learning</h2>
+								<p>Este gráfico interactivo muestra la relación entre Big Data, BI, Machine Learning, Deep Learning y IA.</p>
 							</header>
-							<div id="data-visualization"></div>
-							<p>La convergencia entre IA y BI permite automatizar procesos, obtener insights más profundos, mejorar la toma de decisiones y obtener ventajas competitivas significativas.</p>
+							<div id="d3-graph-container"></div> <!-- Aquí irá el gráfico -->
 						</div>
 					</section>
 
@@ -388,120 +388,86 @@
 				});
 			</script>
 
-			<!-- Data Visualization Script -->
+			<!-- D3.js Graph Script -->
 			<script>
-				// Datos para el gráfico de Zoomable Circle Packing
-				const data = {
-					"name": "Beneficios",
-					"children": [
-						{
-							"name": "Automatización de Procesos",
-							"children": [
-								{"name": "Eficiencia Operativa"},
-								{"name": "Reducción de Costos"}
-							]
-						},
-						{
-							"name": "Insights Profundos",
-							"children": [
-								{"name": "Análisis Predictivo"},
-								{"name": "Tendencias Ocultas"}
-							]
-						},
-						{
-							"name": "Mejora en Toma de Decisiones",
-							"children": [
-								{"name": "Decisiones Basadas en Datos"},
-								{"name": "Estrategias Personalizadas"}
-							]
-						},
-						{
-							"name": "Ventaja Competitiva",
-							"children": [
-								{"name": "Innovación Continua"},
-								{"name": "Adaptabilidad al Mercado"}
-							]
-						}
-					]
-				};
-
-				const width = 600;
-				const height = 600;
-				const color = d3.scaleOrdinal(d3.schemeCategory10);
-
-				const pack = data => d3.pack()
-					.size([width, height])
-					.padding(3)
-					(d3.hierarchy(data)
-					.sum(d => d.value ? d.value : 1)
-					);
-
-				const root = pack(data);
-
-				const svg = d3.select("#data-visualization").append("svg")
-					.attr("viewBox", [0, 0, width, height])
-					.style("display", "block")
-					.style("margin", "0 auto")
-					.style("background", "#f7f7f7")
-					.style("cursor", "pointer");
-
-				let focus = root;
-				let view;
-
-				const node = svg.append("g")
-					.selectAll("circle")
-					.data(root.descendants())
-					.join("circle")
-						.attr("fill", d => d.children ? color(d.depth) : "white")
-						.attr("pointer-events", d => !d.children ? "none" : null)
-						.on("mouseover", function() { d3.select(this).attr("stroke", "#000"); })
-						.on("mouseout", function() { d3.select(this).attr("stroke", null); })
-						.on("click", (event, d) => focus !== d && (zoom(event, d), event.stopPropagation()));
-
-				const label = svg.append("g")
-					.style("font", "16px sans-serif")
-					.attr("text-anchor", "middle")
-					.selectAll("text")
-					.data(root.descendants())
-					.join("text")
-						.style("fill-opacity", d => d.parent === root ? 1 : 0)
-						.style("display", d => d.parent === root ? "inline" : "none")
-						.text(d => d.data.name);
-
-				svg.on("click", (event) => zoom(event, root));
-
-				zoomTo([root.x, root.y, root.r * 2]);
-
-				function zoom(event, d) {
-					const focus0 = focus;
-
-					focus = d;
-
-					const transition = svg.transition()
-						.duration(event.altKey ? 7500 : 750)
-						.tween("zoom", d => {
-							const i = d3.interpolateZoom(view, [focus.x, focus.y, focus.r * 2]);
-							return t => zoomTo(i(t));
-						});
-
-					label
-						.filter(function(d) { return d.parent === focus || this.style.display === "inline"; })
-						.transition(transition)
-						.style("fill-opacity", d => d.parent === focus ? 1 : 0)
-						.on("start", function(d) { if (d.parent === focus) this.style.display = "inline"; })
-						.on("end", function(d) { if (d.parent !== focus) this.style.display = "none"; });
+			// Datos de ejemplo para el gráfico (puedes adaptarlo a lo que necesites)
+			const data = {
+			  name: "Inteligencia Artificial",
+			  children: [
+				{
+				  name: "Big Data",
+				  children: [
+					{ name: "Business Intelligence", value: 1 }
+				  ]
+				},
+				{
+				  name: "Machine Learning",
+				  children: [
+					{ name: "Deep Learning", value: 1 },
+					{ name: "Reinforcement Learning", value: 1 }
+				  ]
+				},
+				{
+				  name: "Visión Artificial", value: 1
+				},
+				{
+				  name: "Procesamiento de Lenguaje Natural", value: 1
+				},
+				{
+				  name: "Optimización", value: 1
 				}
+			  ]
+			};
 
-				function zoomTo(v) {
-					const k = width / v[2];
+			// Dimensiones del gráfico
+			const width = 600;
+			const height = 600;
+			const margin = 20;
 
-					view = v;
+			// Crear el SVG
+			const svg = d3.select("#d3-graph-container")
+			  .append("svg")
+			  .attr("width", width)
+			  .attr("height", height)
+			  .append("g")
+			  .attr("transform", `translate(${margin},${margin})`);
 
-					node.attr("transform", d => `translate(${(d.x - v[0]) * k},${(d.y - v[1]) * k})`);
-					node.attr("r", d => d.r * k);
+			// Crear el layout de pack
+			const pack = d3.pack()
+			  .size([width - margin * 2, height - margin * 2])
+			  .padding(5);
 
-					label.attr("transform", d => `translate(${(d.x - v[0]) * k},${(d.y - v[1]) * k})`);
-				}
+			// Crea una jerarquía de datos
+			const root = d3.hierarchy(data)
+			  .sum(d => d.value ? d.value : 0.5);
+
+			// Aplicar el layout pack a los datos
+			const nodes = pack(root).descendants();
+
+			// Crear los círculos
+			svg.selectAll("circle")
+			  .data(nodes)
+			  .enter()
+			  .append("circle")
+			  .attr("r", d => d.r)
+			  .attr("cx", d => d.x)
+			  .attr("cy", d => d.y)
+			  .attr("fill", d => d.children ? "#007BFF" : "#00BFFF")
+			  .attr("stroke", "#fff")
+			  .attr("stroke-width", 2);
+
+			// Etiquetas de texto
+			svg.selectAll("text")
+			  .data(nodes)
+			  .enter()
+			  .append("text")
+			  .attr("x", d => d.x)
+			  .attr("y", d => d.y)
+			  .attr("dy", "0.3em")
+			  .text(d => d.children ? "" : d.data.name)
+			  .style("text-anchor", "middle")
+			  .style("font-size", "12px")
+			  .style("fill", "#fff");
 			</script>
 
 			<!-- Portfolio Script -->
