@@ -436,319 +436,293 @@
 
             <!-- D3.js Radar Chart Script -->
             <script>
-                // Datos para el Radar Chart
+                // Datos para el gráfico
                 const data = [
-                    {
-                        name: "IA",
-                        axes: [
-                            { axis: "Mejora de Decisiones", value: 70 },
-                            { axis: "Eficiencia Operativa", value: 80 },
-                            { axis: "Innovación", value: 90 },
-                            { axis: "Automatización", value: 85 },
-                            { axis: "Análisis Predictivo", value: 95 }
-                        ]
-                    },
-                    {
-                        name: "BI",
-                        axes: [
-                            { axis: "Mejora de Decisiones", value: 60 },
-                            { axis: "Eficiencia Operativa", value: 65 },
-                            { axis: "Innovación", value: 50 },
-                            { axis: "Automatización", value: 40 },
-                            { axis: "Análisis Predictivo", value: 55 }
-                        ]
-                    },
-                    {
-                        name: "BI + IA",
-                        axes: [
-                            { axis: "Mejora de Decisiones", value: 90 },
-                            { axis: "Eficiencia Operativa", value: 95 },
-                            { axis: "Innovación", value: 100 },
-                            { axis: "Automatización", value: 95 },
-                            { axis: "Análisis Predictivo", value: 100 }
-                        ]
-                    }
+                {
+                    category: "No usar datos",
+                    eficiencia: 30,
+                    calidad: 30,
+                    visualizacion: 30,
+                    profundidad: 30,
+                    decisiones: 30,
+                },
+                {
+                    category: "Business Intelligence (BI)",
+                    eficiencia: 60,
+                    calidad: 45,
+                    visualizacion: 60,
+                    profundidad: 45,
+                    decisiones: 60,
+                },
+                {
+                    category: "BI con IA",
+                    eficiencia: 90,
+                    calidad: 85,
+                    visualizacion: 95,
+                    profundidad: 90,
+                    decisiones: 95,
+                },
                 ];
 
-                const width = 500;
-                const height = 500;
-                const margin = { top: 50, right: 50, bottom: 50, left: 100 }; // Ajuste del margen izquierdo para la leyenda
+                // Configurar las dimensiones del gráfico
+                const margin = { top: 50, right: 50, bottom: 50, left: 50 };
+                let width = Math.min(500, window.innerWidth - margin.left - margin.right);
+                let height = Math.min(500, window.innerHeight - margin.top - margin.bottom);
 
-                const radarChartOptions = {
-                    w: width - margin.left - margin.right,
-                    h: height - margin.top - margin.bottom,
-                    margin: margin,
-                    maxValue: 100,
-                    levels: 5,
-                    roundStrokes: true,
-                    color: d3.scaleOrdinal().range(["#EDC951", "#CC333F", "#00A0B0"]),
-                    format: '.0f',
-                    legend: { title: 'Categorías', translateX: -margin.left + 5, translateY: -20 } // Configuración de la leyenda
-                };
+                // Crear el elemento SVG
+                const svg = d3
+                .select("#chart")
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform", `translate(${width / 2 + margin.left}, ${height / 2 + margin.top})`);
 
-                // Llamar a la función para dibujar el Radar Chart
-                RadarChart("#d3-graph-container", data, radarChartOptions);
+                // Definir las características
+                const features = ["eficiencia", "calidad", "visualizacion", "profundidad", "decisiones"];
 
-                // Función para dibujar el Radar Chart
-                function RadarChart(id, data, options) {
-                    const cfg = {
-                        w: 600,				//Width of the circle
-                        h: 600,				//Height of the circle
-                        margin: { top: 20, right: 20, bottom: 20, left: 20 }, //The margins around the circle
-                        levels: 3,				//How many levels or inner circles should there be drawn
-                        maxValue: 0, 			//What is the value that the biggest circle will represent
-                        labelFactor: 1.1, 	//How much farther than the radius of the outer circle should the labels be placed
-                        wrapWidth: 80, 		//The number of pixels after which a label needs to be given a new line
-                        opacityArea: 0.35, 	//The opacity of the area of the blob
-                        dotRadius: 3, 			//The size of the colored circles of each blob
-                        opacityCircles: 0.1, 	//The opacity of the circles of each blob
-                        strokeWidth: 2, 		//The width of the stroke around each blob
-                        roundStrokes: false,	//If true the area and stroke will follow a round path (cardinal-closed)
-                        color: d3.scaleOrdinal(d3.schemeCategory10),	//Color function
-                        format: '.0%',
-                        unit: '',
-                        legend: false
-                    };
+                // Calcular el radio máximo del gráfico
+                const radius = Math.min(width, height) / 2 - 30;
 
-                    // Overwrite default config with user options
-                    if (typeof options !== 'undefined') {
-                        for (let i in options) {
-                            if (typeof options[i] !== 'undefined') {
-                                cfg[i] = options[i];
-                            }
-                        }
-                    }
+                // Crear la escala radial
+                const radialScale = d3
+                .scaleLinear()
+                .domain([0, 100]) // Rango de los datos
+                .range([0, radius]);
 
-                    // If the supplied maxValue is smaller than the actual one, replace by the max in the data
-                    let maxValue = Math.max(cfg.maxValue, d3.max(data, function(i) {
-                        return d3.max(i.axes.map(function(o) { return o.value; }));
-                    }));
+                // Crear la escala angular
+                const angularScale = d3
+                .scalePoint()
+                .domain(features)
+                .range([0, 2 * Math.PI]);
 
-                    const allAxis = data[0].axes.map(function(i, j) { return i.axis; });
-                    const total = allAxis.length;
-                    const radius = Math.min(cfg.w / 2, cfg.h / 2);
-                    const Format = d3.format(cfg.format);
-                    const angleSlice = Math.PI * 2 / total;
+                // Crear los ejes
+                const axisGrid = svg.append("g").attr("class", "axisWrapper");
 
-                    // Remove whatever chart with the same id/class was present before
-                    d3.select(id).select("svg").remove();
+                axisGrid
+                .selectAll(".levels")
+                .data(d3.range(1, 6)) // Niveles del gráfico (1 a 5)
+                .enter()
+                .append("circle")
+                .attr("class", "gridCircle")
+                .attr("r", (d) => radialScale(d * 20))
+                .style("fill", "#CDCDCD")
+                .style("stroke", "#CDCDCD")
+                .style("fill-opacity", 0.1);
 
-                    // Initiate the radar chart SVG
-                    const svg = d3.select(id).append("svg")
-                        .attr("width", cfg.w + cfg.margin.left + cfg.margin.right)
-                        .attr("height", cfg.h + cfg.margin.top + cfg.margin.bottom)
-                        .attr("class", "radar");
+                axisGrid
+                .selectAll(".axisLine")
+                .data(features)
+                .enter()
+                .append("g")
+                .attr("class", "axisLine")
+                .append("line")
+                .attr("x1", 0)
+                .attr("y1", 0)
+                .attr("x2", (d) => radialScale(100) * Math.cos(angularScale(d) - Math.PI / 2))
+                .attr("y2", (d) => radialScale(100) * Math.sin(angularScale(d) - Math.PI / 2))
+                .style("stroke", "grey")
+                .style("stroke-width", "1px");
 
-                    // Append a g element
-                    const g = svg.append("g")
-                        .attr("transform", "translate(" + (cfg.w / 2 + cfg.margin.left) + "," + (cfg.h / 2 + cfg.margin.top) + ")");
+                // Añadir etiquetas a los ejes
+                axisGrid
+                .selectAll(".axisLabel")
+                .data(features)
+                .enter()
+                .append("text")
+                .attr("class", "axisLabel")
+                .attr("x", (d) => radialScale(110) * Math.cos(angularScale(d) - Math.PI / 2))
+                .attr("y", (d) => radialScale(110) * Math.sin(angularScale(d) - Math.PI / 2))
+                .text((d) => d)
+                .style("font-size", "11px")
+                .attr("text-anchor", "middle");
 
-                    // Glow filter
-                    const filter = g.append('defs').append('filter').attr('id', 'glow'),
-                        feGaussianBlur = filter.append('feGaussianBlur').attr('stdDeviation', '2.5').attr('result', 'coloredBlur'),
-                        feMerge = filter.append('feMerge'),
-                        feMergeNode_1 = feMerge.append('feMergeNode').attr('in', 'coloredBlur'),
-                        feMergeNode_2 = feMerge.append('feMergeNode').attr('in', 'SourceGraphic');
+                // Función para dibujar el radar
+                const radarLine = d3
+                .lineRadial()
+                .radius((d) => radialScale(d))
+                .angle((d, i) => angularScale(features[i]));
 
-                    // Circular grid
-                    const axisGrid = g.append("g").attr("class", "axisWrapper");
+                // Dibujar las áreas del radar
+                const radarWrapper = svg.selectAll(".radarWrapper").data(data).enter().append("g").attr("class", "radarWrapper");
 
-                    // Draw the background circles
-                    axisGrid.selectAll(".levels")
-                        .data(d3.range(1, (cfg.levels + 1)).reverse())
-                        .enter()
-                        .append("circle")
-                        .attr("class", "gridCircle")
-                        .attr("r", function(d) { return radius / cfg.levels * d; })
-                        .style("fill", "#CDCDCD")
-                        .style("stroke", "#CDCDCD")
-                        .style("fill-opacity", cfg.opacityCircles)
-                        .style("filter", "url(#glow)");
+                radarWrapper
+                .append("path")
+                .attr("class", "radarArea")
+                .attr("d", (d) => radarLine(features.map((feature) => d[feature])))
+                .style("fill", (d, i) => d3.schemeCategory10[i % 10])
+                .style("fill-opacity", 0.3)
+                .on("mouseover", function () {
+                    d3.selectAll(".radarArea").transition().duration(200).style("fill-opacity", 0.1);
+                    d3.select(this).transition().duration(200).style("fill-opacity", 0.7);
+                })
+                .on("mouseout", function () {
+                    d3.selectAll(".radarArea").transition().duration(200).style("fill-opacity", 0.3);
+                });
 
-                    // Text indicating at what % each level is
-                    axisGrid.selectAll(".axisLabel")
-                        .data(d3.range(1, (cfg.levels + 1)).reverse())
-                        .enter().append("text")
-                        .attr("class", "axisLabel")
-                        .attr("x", 4)
-                        .attr("y", function(d) { return -d * radius / cfg.levels; })
-                        .attr("dy", "0.4em")
-                        .style("font-size", "10px")
-                        .attr("fill", "#737373")
-                        .text(function(d) { return Format(maxValue * d / cfg.levels / 100); });
+                radarWrapper
+                .append("path")
+                .attr("class", "radarStroke")
+                .attr("d", (d) => radarLine(features.map((feature) => d[feature])))
+                .style("stroke-width", "2px")
+                .style("stroke", (d, i) => d3.schemeCategory10[i % 10])
+                .style("fill", "none");
 
-                    // Scale for the radius
-                    const rScale = d3.scaleLinear()
-                        .range([0, radius])
-                        .domain([0, maxValue]);
+                // Añadir leyenda
+                const legend = svg
+                .append("g")
+                .attr("class", "legend")
+                .attr("height", 100)
+                .attr("width", 200)
+                .attr("transform", `translate(-100, ${height / 2})`);
 
-                    // Draw the axes
-                    const axis = axisGrid.selectAll(".axis")
-                        .data(allAxis)
-                        .enter()
-                        .append("g")
-                        .attr("class", "axis");
+                const legendRow = legend
+                .selectAll(".legendRow")
+                .data(data)
+                .enter()
+                .append("g")
+                .attr("class", "legendRow")
+                .attr("transform", (d, i) => `translate(0, ${i * 20})`);
 
-                    // Append the lines
-                    axis.append("line")
-                        .attr("x1", 0)
-                        .attr("y1", 0)
-                        .attr("x2", function(d, i) { return rScale(maxValue * 1.1) * Math.cos(angleSlice * i - Math.PI / 2); })
-                        .attr("y2", function(d, i) { return rScale(maxValue * 1.1) * Math.sin(angleSlice * i - Math.PI / 2); })
-                        .attr("class", "line")
-                        .style("stroke", "white")
-                        .style("stroke-width", "2px");
+                legendRow
+                .append("rect")
+                .attr("width", 10)
+                .attr("height", 10)
+                .attr("fill", (d, i) => d3.schemeCategory10[i % 10]);
 
-                    // Append the labels
-                    axis.append("text")
-                        .attr("class", "legend")
-                        .style("font-size", "11px")
-                        .attr("text-anchor", "middle")
-                        .attr("dy", "0.35em")
-                        .attr("x", function(d, i) { return rScale(maxValue * cfg.labelFactor) * Math.cos(angleSlice * i - Math.PI / 2); })
-                        .attr("y", function(d, i) { return rScale(maxValue * cfg.labelFactor) * Math.sin(angleSlice * i - Math.PI / 2); })
-                        .text(function(d) { return d; })
-                        .call(wrap, cfg.wrapWidth);
+                legendRow
+                .append("text")
+                .attr("x", 20)
+                .attr("y", 10)
+                .text((d) => d.category)
+                .style("font-size", "12px")
+                .attr("text-anchor", "start");
 
-                    // Radar chart blobs
-                    const radarLine = d3.lineRadial()
-                        .curve(d3.curveLinearClosed)
-                        .radius(function(d) { return rScale(d.value); })
-                        .angle(function(d, i) { return i * angleSlice; });
+                // Hacer el gráfico responsivo
+                window.addEventListener("resize", () => {
+                width = Math.min(500, window.innerWidth - margin.left - margin.right);
+                height = Math.min(500, window.innerHeight - margin.top - margin.bottom);
+                d3.select("#chart svg").remove();
+                renderRadarChart();
+                });
 
-                    if (cfg.roundStrokes) {
-                        radarLine.curve(d3.curveCardinalClosed);
-                    }
+                // Función para renderizar el gráfico
+                function renderRadarChart() {
+                const svg = d3
+                    .select("#chart")
+                    .append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.top + margin.bottom)
+                    .append("g")
+                    .attr("transform", `translate(${width / 2 + margin.left}, ${height / 2 + margin.top})`);
 
-                    // Create a wrapper for the blobs
-                    const blobWrapper = g.selectAll(".radarWrapper")
-                        .data(data)
-                        .enter().append("g")
-                        .attr("class", "radarWrapper");
+                const radius = Math.min(width, height) / 2 - 30;
 
-                    // Append the backgrounds
-                    blobWrapper
-                        .append("path")
-                        .attr("class", "radarArea")
-                        .attr("d", function(d) { return radarLine(d.axes); })
-                        .style("fill", function(d, i) { return cfg.color(i); })
-                        .style("fill-opacity", cfg.opacityArea)
-                        .on('mouseover', function(event, d) {
-                            // Dim all blobs
-                            d3.selectAll(".radarArea")
-                                .transition().duration(200)
-                                .style("fill-opacity", 0.1);
-                            // Bring back the hovered over blob
-                            d3.select(this)
-                                .transition().duration(200)
-                                .style("fill-opacity", 0.7);
-                        })
-                        .on('mouseout', function() {
-                            // Bring back all blobs
-                            d3.selectAll(".radarArea")
-                                .transition().duration(200)
-                                .style("fill-opacity", cfg.opacityArea);
-                        });
+                const radialScale = d3
+                    .scaleLinear()
+                    .domain([0, 100])
+                    .range([0, radius]);
 
-                    // Create the outlines
-                    blobWrapper.append("path")
-                        .attr("class", "radarStroke")
-                        .attr("d", function(d) { return radarLine(d.axes); })
-                        .style("stroke-width", cfg.strokeWidth + "px")
-                        .style("stroke", function(d, i) { return cfg.color(i); })
-                        .style("fill", "none")
-                        .style("filter", "url(#glow)");
+                const angularScale = d3
+                    .scalePoint()
+                    .domain(features)
+                    .range([0, 2 * Math.PI]);
 
-                    // Append the circles
-                    blobWrapper.selectAll(".radarCircle")
-                        .data(function(d) { return d.axes; })
-                        .enter().append("circle")
-                        .attr("class", "radarCircle")
-                        .attr("r", cfg.dotRadius)
-                        .attr("cx", function(d, i) { return rScale(d.value) * Math.cos(angleSlice * i - Math.PI / 2); })
-                        .attr("cy", function(d, i) { return rScale(d.value) * Math.sin(angleSlice * i - Math.PI / 2); })
-                        .style("fill", function(d) {
-                            const parentData = d3.select(this.parentNode).datum();
-                            return cfg.color(data.indexOf(parentData));
-                        })
-                        .style("fill-opacity", 0.8);
+                const axisGrid = svg.append("g").attr("class", "axisWrapper");
 
-                    // Leyenda
-                    if (cfg.legend !== false && typeof cfg.legend === "object") {
-                        const legendZone = svg.append('g');
-                        const names = data.map(el => el.name);
-                        if (cfg.legend.title) {
-                            legendZone.append("text")
-                                .attr("class", "title")
-                                .attr('transform', `translate(${cfg.legend.translateX},${cfg.legend.translateY})`)
-                                .attr("x", cfg.w - 70)
-                                .attr("y", 10)
-                                .attr("font-size", "12px")
-                                .attr("fill", "#404040")
-                                .text(cfg.legend.title);
-                        }
-                        const legend = legendZone.append("g")
-                            .attr("class", "legend")
-                            .attr("height", 100)
-                            .attr("width", 200)
-                            .attr('transform', `translate(${cfg.legend.translateX},${cfg.legend.translateY + 20})`);
-                        // Create rectangles markers
-                        legend.selectAll('rect')
-                            .data(names)
-                            .enter()
-                            .append("rect")
-                            .attr("x", cfg.w - 110)
-                            .attr("y", function(d, i) { return i * 20; })
-                            .attr("width", 10)
-                            .attr("height", 10)
-                            .style("fill", function(d, i) { return cfg.color(i); });
-                        // Create labels
-                        legend.selectAll('text')
-                            .data(names)
-                            .enter()
-                            .append("text")
-                            .attr("x", cfg.w - 95)
-                            .attr("y", function(d, i) { return i * 20 + 9; })
-                            .attr("font-size", "11px")
-                            .attr("fill", "#737373")
-                            .text(function(d) { return d; });
-                    }
+                axisGrid
+                    .selectAll(".levels")
+                    .data(d3.range(1, 6))
+                    .enter()
+                    .append("circle")
+                    .attr("class", "gridCircle")
+                    .attr("r", (d) => radialScale(d * 20))
+                    .style("fill", "#CDCDCD")
+                    .style("stroke", "#CDCDCD")
+                    .style("fill-opacity", 0.1);
 
-                    // Helper Function to wrap SVG text
-                    function wrap(text, width) {
-                        text.each(function() {
-                            let text = d3.select(this),
-                                words = text.text().split(/\s+/).reverse(),
-                                word,
-                                line = [],
-                                lineNumber = 0,
-                                lineHeight = 1.4, // ems
-                                y = text.attr("y"),
-                                x = text.attr("x"),
-                                dy = parseFloat(text.attr("dy")),
-                                tspan = text.text(null)
-                                    .append("tspan")
-                                    .attr("x", x)
-                                    .attr("y", y)
-                                    .attr("dy", dy + "em");
+                axisGrid
+                    .selectAll(".axisLine")
+                    .data(features)
+                    .enter()
+                    .append("g")
+                    .attr("class", "axisLine")
+                    .append("line")
+                    .attr("x1", 0)
+                    .attr("y1", 0)
+                    .attr("x2", (d) => radialScale(100) * Math.cos(angularScale(d) - Math.PI / 2))
+                    .attr("y2", (d) => radialScale(100) * Math.sin(angularScale(d) - Math.PI / 2))
+                    .style("stroke", "grey")
+                    .style("stroke-width", "1px");
 
-                            while (word = words.pop()) {
-                                line.push(word);
-                                tspan.text(line.join(" "));
-                                if (tspan.node().getComputedTextLength() > width) {
-                                    line.pop();
-                                    tspan.text(line.join(" "));
-                                    line = [word];
-                                    tspan = text.append("tspan")
-                                        .attr("x", x)
-                                        .attr("y", y)
-                                        .attr("dy", ++lineNumber * lineHeight + dy + "em")
-                                        .text(word);
-                                }
-                            }
-                        });
-                    }
+                axisGrid
+                    .selectAll(".axisLabel")
+                    .data(features)
+                    .enter()
+                    .append("text")
+                    .attr("class", "axisLabel")
+                    .attr("x", (d) => radialScale(110) * Math.cos(angularScale(d) - Math.PI / 2))
+                    .attr("y", (d) => radialScale(110) * Math.sin(angularScale(d) - Math.PI / 2))
+                    .text((d) => d)
+                    .style("font-size", "11px")
+                    .attr("text-anchor", "middle");
+
+                const radarWrapper = svg.selectAll(".radarWrapper").data(data).enter().append("g").attr("class", "radarWrapper");
+
+                radarWrapper
+                    .append("path")
+                    .attr("class", "radarArea")
+                    .attr("d", (d) => radarLine(features.map((feature) => d[feature])))
+                    .style("fill", (d, i) => d3.schemeCategory10[i % 10])
+                    .style("fill-opacity", 0.3)
+                    .on("mouseover", function () {
+                    d3.selectAll(".radarArea").transition().duration(200).style("fill-opacity", 0.1);
+                    d3.select(this).transition().duration(200).style("fill-opacity", 0.7);
+                    })
+                    .on("mouseout", function () {
+                    d3.selectAll(".radarArea").transition().duration(200).style("fill-opacity", 0.3);
+                    });
+
+                radarWrapper
+                    .append("path")
+                    .attr("class", "radarStroke")
+                    .attr("d", (d) => radarLine(features.map((feature) => d[feature])))
+                    .style("stroke-width", "2px")
+                    .style("stroke", (d, i) => d3.schemeCategory10[i % 10])
+                    .style("fill", "none");
+
+                const legend = svg
+                    .append("g")
+                    .attr("class", "legend")
+                    .attr("height", 100)
+                    .attr("width", 200)
+                    .attr("transform", `translate(-100, ${height / 2})`);
+
+                const legendRow = legend
+                    .selectAll(".legendRow")
+                    .data(data)
+                    .enter()
+                    .append("g")
+                    .attr("class", "legendRow")
+                    .attr("transform", (d, i) => `translate(0, ${i * 20})`);
+
+                legendRow
+                    .append("rect")
+                    .attr("width", 10)
+                    .attr("height", 10)
+                    .attr("fill", (d, i) => d3.schemeCategory10[i % 10]);
+
+                legendRow
+                    .append("text")
+                    .attr("x", 20)
+                    .attr("y", 10)
+                    .text((d) => d.category)
+                    .style("font-size", "12px")
+                    .attr("text-anchor", "start");
                 }
+
+                // Inicializar el gráfico
+                renderRadarChart();
             </script>
 
             <!-- Portfolio Script -->
