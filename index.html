@@ -958,19 +958,23 @@
             });
 
             // Manejo del Google Sign-In con depuración
-            document.getElementById('google-signin-btn').addEventListener('click', function() {
+                document.getElementById('google-signin-btn').addEventListener('click', function() {
                 console.log('Botón de Iniciar sesión clickeado');
                 const provider = new firebase.auth.GoogleAuthProvider();
-                auth.signInWithPopup(provider)
-                    .then((result) => {
-                        console.log('Login exitoso, redirigiendo a user.html...');
-                        // Redirigir a la página de usuario personalizada
-                        window.location.href = "/user.html";  // Asegúrate de que esta ruta sea correcta
-                    })
-                    .catch((error) => {
-                        console.error("Error al iniciar sesión: ", error);
-                    });
+                auth.signInWithRedirect(provider);  // Cambiado a redirect en lugar de popup
             });
+
+            // Manejar el redireccionamiento después de la autenticación
+            auth.getRedirectResult()
+                .then((result) => {
+                    if (result.user) {
+                        console.log('Login exitoso, redirigiendo a user.html...');
+                        window.location.href = "/user.html";  // Asegúrate de que la ruta sea correcta
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error al iniciar sesión: ", error);
+                });
         </script>
 
             
