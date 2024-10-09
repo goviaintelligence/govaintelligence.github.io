@@ -89,6 +89,36 @@
                 stroke-width: 0;
                 stroke: #fff;
             }
+            /* Estilo login */
+            #menu {
+                display: flex;
+                flex-direction: column; /* Organiza los elementos del menú en columna */
+                align-items: flex-start; /* Alinea los elementos a la izquierda */
+            }
+
+            #menu ul {
+                flex-grow: 1; /* Permite que los elementos del menú ocupen la mayor parte del espacio */
+            }
+
+            #google-signin-btn {
+                background-color: #4285F4;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                padding: 10px 20px;
+                cursor: pointer;
+                font-size: 16px;
+                margin-top: 20px; /* Da un espacio extra entre el último enlace (Contacto) y el botón */
+                align-self: flex-start; /* Alinea el botón con el contenido del menú */
+            }
+
+            #google-signin-btn:hover {
+                background-color: #357ae8;
+            }
+
+
+
+
         </style>
     </head>
     <body class="landing is-preload">
@@ -113,6 +143,7 @@
                                             <li><a href="Servicios.html">Servicios</a></li>
                                             <li><a href="Porfolio.html">Porfolio</a></li>
                                             <li><a href="contacto.html">Contacto</a></li>
+                                            <button id="google-signin-btn">INICIAR SESIÓN</button>
                                         </ul>
                                     </div>
                                 </li>
@@ -899,6 +930,39 @@
                     menu.classList.toggle('active');
                 });
             </script>
+            <!-- Firebase SDK -->
+            <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+            <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+
+            <script>
+                // Configuración de Firebase
+                const firebaseConfig = {
+                    apiKey: "AIzaSyC2VK-Hxs5ak7Cob6eWozaZia4avduk8F4",
+                    authDomain: "govia-505c5.firebaseapp.com",
+                    projectId: "govia-505c5",
+                    storageBucket: "govia-505c5.appspot.com",
+                    messagingSenderId: "906079889260",
+                    appId: "1:906079889260:web:d609395d33acc1534e3549"
+                };
+            
+                // Inicializar Firebase
+                const app = firebase.initializeApp(firebaseConfig);
+                const auth = firebase.auth();
+            
+                // Manejo del Google Sign-In
+                document.getElementById('google-signin-btn').addEventListener('click', function() {
+                    const provider = new firebase.auth.GoogleAuthProvider();
+                    auth.signInWithPopup(provider)
+                        .then((result) => {
+                            // Redirigir al usuario a la página de usuario personalizada
+                            window.location.href = "user.html";  // Cambiado a "user.html"
+                        })
+                        .catch((error) => {
+                            console.error("Error al iniciar sesión: ", error);
+                        });
+                });
+            </script>
+            
 
     </body>
 </html>
