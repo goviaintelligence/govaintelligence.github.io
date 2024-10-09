@@ -933,7 +933,6 @@
             <!-- Firebase SDK -->
             <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
             <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
-
             <script>
                 // Configuración de Firebase
                 const firebaseConfig = {
@@ -955,7 +954,7 @@
                     auth.signInWithPopup(provider)
                         .then((result) => {
                             // Redirigir al usuario a la página de usuario personalizada
-                            window.location.href = "user.html";  // Cambiado a "user.html"
+                            window.location.href = "user.html";
                         })
                         .catch((error) => {
                             console.error("Error al iniciar sesión: ", error);
@@ -963,6 +962,7 @@
                 });
             </script>
             
+     
 
     </body>
 </html>
