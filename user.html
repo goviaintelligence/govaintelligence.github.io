@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<title>USUARIO</title>
+		<title>Panel de Usuario</title>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
@@ -27,6 +27,7 @@
 		<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
 		<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
 
+		<!-- Firebase Configuration -->
 		<script>
 			// Configuración de Firebase
 			const firebaseConfig = {
@@ -37,38 +38,22 @@
 				messagingSenderId: "906079889260",
 				appId: "1:906079889260:web:d609395d33acc1534e3549"
 			};
-		
+
 			// Inicializar Firebase
 			const app = firebase.initializeApp(firebaseConfig);
 			const auth = firebase.auth();
-		
-			// Manejar el estado de autenticación
+
+			// Verificar si el usuario está autenticado
 			auth.onAuthStateChanged((user) => {
 				if (user) {
-					// El usuario está autenticado, mostrar su información
+					// Mostrar información del usuario
 					document.getElementById('user-info').innerText = `Bienvenido, ${user.email}`;
 				} else {
-					// Si no hay usuario autenticado, redirigir a login.html
-					console.log("Usuario no autenticado. Redirigiendo a login.html...");
-					window.location.href = "/login.html"; // Asegúrate de que esta ruta sea correcta
+					// Si no está autenticado, redirigir al login
+					window.location.href = "login.html";
 				}
 			});
-		
-			// Manejo del Google Sign-In con depuración
-			document.getElementById('google-signin-btn').addEventListener('click', function() {
-				console.log('Botón de Iniciar sesión clickeado');
-				const provider = new firebase.auth.GoogleAuthProvider();
-				auth.signInWithPopup(provider)
-					.then((result) => {
-						console.log('Login exitoso, redirigiendo a user.html...');
-						// Redirigir a la página de usuario personalizada
-						window.location.href = "/user.html";  // Asegúrate de que esta ruta sea correcta
-					})
-					.catch((error) => {
-						console.error("Error al iniciar sesión: ", error);
-					});
-			});
 		</script>
-		
 	</body>
 </html>
+
