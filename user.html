@@ -39,11 +39,11 @@
 					messagingSenderId: "906079889260",
 					appId: "1:906079889260:web:d609395d33acc1534e3549"
 				};
-
+		
 				// Inicializar Firebase
 				const app = firebase.initializeApp(firebaseConfig);
 				const auth = firebase.auth();
-
+		
 				// Manejo del Google Sign-In
 				const signInBtn = document.getElementById('google-signin-btn');
 				if (signInBtn) {
@@ -55,7 +55,7 @@
 				} else {
 					console.error("No se encontró el botón de iniciar sesión.");
 				}
-
+		
 				// Manejar el redireccionamiento después de la autenticación
 				auth.getRedirectResult().then((result) => {
 					if (result.user) {
@@ -67,6 +67,7 @@
 				});
 			});
 		</script>
+		
 
     </body>
 </html>
