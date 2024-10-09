@@ -23,38 +23,48 @@
             </section>
         </div>
 
-        <!-- Firebase App (CDN) -->
-        <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-        <!-- Firebase Authentication (CDN) -->
-        <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+ <!-- Firebase App (CDN) -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+<!-- Firebase Authentication (CDN) -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                // Configuración de Firebase
-                const firebaseConfig = {
-                    apiKey: "AIzaSyC2VK-Hxs5ak7Cob6eWozaZia4avduk8F4",
-                    authDomain: "govia-505c5.firebaseapp.com",
-                    projectId: "govia-505c5",
-                    storageBucket: "govia-505c5.appspot.com",
-                    messagingSenderId: "906079889260",
-                    appId: "1:906079889260:web:d609395d33acc1534e3549"
-                };
+<script>
+  // Configuración de Firebase
+  const firebaseConfig = {
+    apiKey: "AIzaSyC2VK-Hxs5ak7Cob6eWozaZia4avduk8F4",
+    authDomain: "govia-505c5.firebaseapp.com",
+    projectId: "govia-505c5",
+    storageBucket: "govia-505c5.appspot.com",
+    messagingSenderId: "906079889260",
+    appId: "1:906079889260:web:d609395d33acc1534e3549"
+  };
 
-                // Inicializar Firebase
-                const app = firebase.initializeApp(firebaseConfig);
-                const auth = firebase.auth();
+  // Inicializar Firebase
+  firebase.initializeApp(firebaseConfig);
 
-                // Verificar si el usuario está autenticado
-                auth.onAuthStateChanged((user) => {
-                    if (user) {
-                        // Mostrar la información del usuario
-                        document.getElementById('user-info').innerText = `Bienvenido, ${user.email}`;
-                    } else {
-                        // Si no está autenticado, redirigir a la página de inicio de sesión
-                        window.location.href = "/index.html";
-                    }
-                });
-            });
-        </script>
+  // Autenticación
+  const auth = firebase.auth();
+
+  // Manejo del Google Sign-In
+  const signInBtn = document.getElementById('google-signin-btn');
+  if (signInBtn) {
+    signInBtn.addEventListener('click', function() {
+      console.log('Botón de Iniciar sesión clickeado');
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithRedirect(provider);
+    });
+  }
+
+  // Manejar el redireccionamiento después de la autenticación
+  auth.getRedirectResult().then((result) => {
+    if (result.user) {
+      console.log('Login exitoso, redirigiendo a user.html...');
+      window.location.href = "/user.html";  // Redirige a la página personalizada
+    }
+  }).catch((error) => {
+    console.error("Error al iniciar sesión: ", error);
+  });
+</script>
+
     </body>
 </html>
