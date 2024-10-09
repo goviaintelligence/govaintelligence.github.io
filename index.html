@@ -931,50 +931,50 @@
                 });
             </script>
  
-            <!-- Firebase App (ES6 Modules) -->
+            <!-- Cargar Firebase -->
+            <!-- Firebase App (CDN) -->
             <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-            <!-- Firebase Authentication -->
+            <!-- Firebase Authentication (CDN) -->
             <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
 
-            
             <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    // Configuración de Firebase
-                    const firebaseConfig = {
-                        apiKey: "AIzaSyC2VK-Hxs5ak7Cob6eWozaZia4avduk8F4",
-                        authDomain: "govia-505c5.firebaseapp.com",
-                        projectId: "govia-505c5",
-                        storageBucket: "govia-505c5.appspot.com",
-                        messagingSenderId: "906079889260",
-                        appId: "1:906079889260:web:d609395d33acc1534e3549"
-                    };
+            document.addEventListener('DOMContentLoaded', function() {
+                // Configuración de Firebase
+                const firebaseConfig = {
+                    apiKey: "AIzaSyC2VK-Hxs5ak7Cob6eWozaZia4avduk8F4",
+                    authDomain: "govia-505c5.firebaseapp.com",
+                    projectId: "govia-505c5",
+                    storageBucket: "govia-505c5.appspot.com",
+                    messagingSenderId: "906079889260",
+                    appId: "1:906079889260:web:d609395d33acc1534e3549"
+                };
 
-                    // Inicializar Firebase
-                    const app = firebase.initializeApp(firebaseConfig);
-                    const auth = firebase.auth();
+                // Inicializar Firebase
+                const app = firebase.initializeApp(firebaseConfig);
+                const auth = firebase.auth();
 
-                    // Manejo del Google Sign-In
-                    const signInBtn = document.getElementById('google-signin-btn');
-                    if (signInBtn) {
-                        signInBtn.addEventListener('click', function() {
-                            console.log('Botón de Iniciar sesión clickeado');
-                            const provider = new firebase.auth.GoogleAuthProvider();
-                            auth.signInWithRedirect(provider);
-                        });
-                    } else {
-                        console.error("No se encontró el botón de iniciar sesión.");
-                    }
-
-                    // Manejar el redireccionamiento después de la autenticación
-                    auth.getRedirectResult().then((result) => {
-                        if (result.user) {
-                            console.log('Login exitoso, redirigiendo a user.html...');
-                            window.location.href = "/user.html";
-                        }
-                    }).catch((error) => {
-                        console.error("Error al iniciar sesión: ", error);
+                // Manejo del Google Sign-In
+                const signInBtn = document.getElementById('google-signin-btn');
+                if (signInBtn) {
+                    signInBtn.addEventListener('click', function() {
+                        console.log('Botón de Iniciar sesión clickeado');
+                        const provider = new firebase.auth.GoogleAuthProvider();
+                        auth.signInWithRedirect(provider);
                     });
+                } else {
+                    console.error("No se encontró el botón de iniciar sesión.");
+                }
+
+                // Manejar el redireccionamiento después de la autenticación
+                auth.getRedirectResult().then((result) => {
+                    if (result.user) {
+                        console.log('Login exitoso, redirigiendo a user.html...');
+                        window.location.href = "/user.html";
+                    }
+                }).catch((error) => {
+                    console.error("Error al iniciar sesión: ", error);
                 });
+            });
             </script>
 
 
