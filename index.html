@@ -950,34 +950,20 @@
     // Inicializar Firebase
     firebase.initializeApp(firebaseConfig);
   
-    // Inicializar la autenticación de Firebase
+    // Autenticación con Google
     const auth = firebase.auth();
+    const provider = new firebase.auth.GoogleAuthProvider();
   
-    // Evento para iniciar sesión con Google
-    document.getElementById('google-signin-btn').addEventListener('click', function() {
-      const provider = new firebase.auth.GoogleAuthProvider();
+    document.getElementById('google-signin-btn').addEventListener('click', () => {
       auth.signInWithPopup(provider)
-        .then((result) => {
-          // Aquí puedes manejar el redireccionamiento o la información del usuario
-          console.log('Inicio de sesión exitoso', result.user);
-          window.location.href = "/user.html"; // Redirige a la página de usuario
+        .then(result => {
+          console.log("Usuario autenticado:", result.user);
+          window.location.href = "user.html";  // Redirigir al panel de usuario
         })
-        .catch((error) => {
-          console.error('Error de inicio de sesión:', error);
+        .catch(error => {
+          console.error("Error en la autenticación:", error);
         });
     });
-  
-    // Manejar el redireccionamiento después del inicio de sesión
-    auth.getRedirectResult()
-      .then((result) => {
-        if (result.user) {
-          // Si el usuario ya está autenticado, redirige o maneja los datos
-          console.log('Redirección después del login', result.user);
-        }
-      })
-      .catch((error) => {
-        console.error('Error de redirección:', error);
-      });
   </script>
 
 
