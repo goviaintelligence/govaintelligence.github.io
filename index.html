@@ -26,8 +26,8 @@
         <script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>
         <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
         <!-- Cargar Firebase desde CDN -->
-        <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-        <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js"></script>
         <!-- Particles.js Library -->
         <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
         <style>
@@ -936,35 +936,49 @@
  
 
 
-                <script>
-                // Configuración de Firebase
-                const firebaseConfig = {
-                    apiKey: "AIzaSyC2VK-Hxs5ak7Cob6eWozaZia4avduk8F4",
-                    authDomain: "govia-505c5.firebaseapp.com",
-                    projectId: "govia-505c5",
-                    storageBucket: "govia-505c5.appspot.com",
-                    messagingSenderId: "906079889260",
-                    appId: "1:906079889260:web:d609395d33acc1534e3549"
-                };
-
-                // Inicializar Firebase
-                firebase.initializeApp(firebaseConfig);
-
-                // Manejar autenticación
-                const auth = firebase.auth();
-
-                // Evento para el botón de inicio de sesión
-                document.getElementById('google-signin-btn').addEventListener('click', function() {
-                    const provider = new firebase.auth.GoogleAuthProvider();
-                    auth.signInWithPopup(provider)
-                    .then((result) => {
-                        window.location.href = "/user.html"; // Redirige al usuario autenticado
-                    })
-                    .catch((error) => {
-                        console.error("Error de autenticación:", error);
-                    });
-                });
-                </script>
+ <script>
+    // Configuración de Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyC2VK-Hxs5ak7Cob6eWozaZia4avduk8F4",
+      authDomain: "govia-505c5.firebaseapp.com",
+      projectId: "govia-505c5",
+      storageBucket: "govia-505c5.appspot.com",
+      messagingSenderId: "906079889260",
+      appId: "1:906079889260:web:d609395d33acc1534e3549"
+    };
+  
+    // Inicializar Firebase
+    firebase.initializeApp(firebaseConfig);
+  
+    // Inicializar la autenticación de Firebase
+    const auth = firebase.auth();
+  
+    // Evento para iniciar sesión con Google
+    document.getElementById('google-signin-btn').addEventListener('click', function() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider)
+        .then((result) => {
+          // Aquí puedes manejar el redireccionamiento o la información del usuario
+          console.log('Inicio de sesión exitoso', result.user);
+          window.location.href = "/user.html"; // Redirige a la página de usuario
+        })
+        .catch((error) => {
+          console.error('Error de inicio de sesión:', error);
+        });
+    });
+  
+    // Manejar el redireccionamiento después del inicio de sesión
+    auth.getRedirectResult()
+      .then((result) => {
+        if (result.user) {
+          // Si el usuario ya está autenticado, redirige o maneja los datos
+          console.log('Redirección después del login', result.user);
+        }
+      })
+      .catch((error) => {
+        console.error('Error de redirección:', error);
+      });
+  </script>
 
 
 

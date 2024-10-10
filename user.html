@@ -22,11 +22,11 @@
     </div>
 
     <!-- Firebase App (CDN) -->
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js"></script>
 
     <script>
-      // Inicializar Firebase (usa la misma configuración que en index.html)
+      // Configuración de Firebase
       const firebaseConfig = {
         apiKey: "AIzaSyC2VK-Hxs5ak7Cob6eWozaZia4avduk8F4",
         authDomain: "govia-505c5.firebaseapp.com",
@@ -35,20 +35,38 @@
         messagingSenderId: "906079889260",
         appId: "1:906079889260:web:d609395d33acc1534e3549"
       };
-      
+    
+      // Inicializar Firebase
       firebase.initializeApp(firebaseConfig);
+    
+      // Inicializar la autenticación de Firebase
       const auth = firebase.auth();
-
-      // Verifica si hay un usuario autenticado
-      auth.onAuthStateChanged((user) => {
-        if (user) {
-          // Usuario autenticado
-          document.getElementById('user-info').textContent = `Bienvenido, ${user.displayName}`;
-        } else {
-          // Redirige si no está autenticado
-          window.location.href = "/index.html";
-        }
+    
+      // Evento para iniciar sesión con Google
+      document.getElementById('google-signin-btn').addEventListener('click', function() {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        auth.signInWithPopup(provider)
+          .then((result) => {
+            // Aquí puedes manejar el redireccionamiento o la información del usuario
+            console.log('Inicio de sesión exitoso', result.user);
+            window.location.href = "/user.html"; // Redirige a la página de usuario
+          })
+          .catch((error) => {
+            console.error('Error de inicio de sesión:', error);
+          });
       });
+    
+      // Manejar el redireccionamiento después del inicio de sesión
+      auth.getRedirectResult()
+        .then((result) => {
+          if (result.user) {
+            // Si el usuario ya está autenticado, redirige o maneja los datos
+            console.log('Redirección después del login', result.user);
+          }
+        })
+        .catch((error) => {
+          console.error('Error de redirección:', error);
+        });
     </script>
   </body>
 </html>
