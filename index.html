@@ -931,40 +931,40 @@
                 });
             </script>
  
-<!-- Cargar Firebase desde CDN -->
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+                <!-- Cargar Firebase desde CDN -->
+                <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+                <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
 
-<script>
-  // Configuración de Firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyC2VK-Hxs5ak7Cob6eWozaZia4avduk8F4",
-    authDomain: "govia-505c5.firebaseapp.com",
-    projectId: "govia-505c5",
-    storageBucket: "govia-505c5.appspot.com",
-    messagingSenderId: "906079889260",
-    appId: "1:906079889260:web:d609395d33acc1534e3549"
-  };
+                <script>
+                // Configuración de Firebase
+                const firebaseConfig = {
+                    apiKey: "AIzaSyC2VK-Hxs5ak7Cob6eWozaZia4avduk8F4",
+                    authDomain: "govia-505c5.firebaseapp.com",
+                    projectId: "govia-505c5",
+                    storageBucket: "govia-505c5.appspot.com",
+                    messagingSenderId: "906079889260",
+                    appId: "1:906079889260:web:d609395d33acc1534e3549"
+                };
 
-  // Inicializar Firebase
-  firebase.initializeApp(firebaseConfig);
+                // Inicializar Firebase
+                firebase.initializeApp(firebaseConfig);
 
-  // Manejar la autenticación
-  const auth = firebase.auth();
+                // Manejar autenticación
+                const auth = firebase.auth();
 
-  // Evento para el botón de inicio de sesión con Google
-  document.getElementById('google-signin-btn').addEventListener('click', function() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider)
-      .then((result) => {
-        // Redirigir al usuario después de un inicio de sesión exitoso
-        window.location.href = "/user.html";
-      })
-      .catch((error) => {
-        console.error("Error de autenticación:", error);
-      });
-  });
-</script>
+                // Evento para el botón de inicio de sesión
+                document.getElementById('google-signin-btn').addEventListener('click', function() {
+                    const provider = new firebase.auth.GoogleAuthProvider();
+                    auth.signInWithPopup(provider)
+                    .then((result) => {
+                        window.location.href = "/user.html"; // Redirige al usuario autenticado
+                    })
+                    .catch((error) => {
+                        console.error("Error de autenticación:", error);
+                    });
+                });
+                </script>
+
 
 
     </body>
