@@ -959,7 +959,7 @@
             signInBtn.addEventListener('click', function() {
                 console.log('Botón de Iniciar sesión clickeado');
                 const provider = new firebase.auth.GoogleAuthProvider();
-                auth.signInWithRedirect(provider);
+                auth.signInWithRedirect(provider); // Redirección para el inicio de sesión con Google
             });
         } else {
             console.error("No se encontró el botón de iniciar sesión.");
@@ -969,13 +969,14 @@
         auth.getRedirectResult().then((result) => {
             if (result.user) {
                 console.log('Login exitoso, redirigiendo a user.html...');
-                window.location.href = "user.html";
+                window.location.href = "/user.html"; // Redirige al usuario autenticado a la página de usuario
             }
         }).catch((error) => {
             console.error("Error al iniciar sesión: ", error);
         });
     });
 </script>
+
 
 
 
