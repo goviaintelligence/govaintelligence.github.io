@@ -1,75 +1,54 @@
 <!DOCTYPE HTML>
 <html>
-    <head>
-        <title>Panel de Usuario</title>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
-        <link rel="stylesheet" href="assets/css/main.css" />
-    </head>
-    <body>
-        <!-- Header -->
-        <header id="header">
-            <h1>Panel de Usuario</h1>
-        </header>
+  <head>
+    <title>Panel de Usuario</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+  </head>
+  <body>
+    <header id="header">
+      <h1>Panel de Usuario</h1>
+    </header>
 
-        <!-- Main Content -->
-        <div class="container">
-            <section>
-                <h2>Bienvenido</h2>
-                <p id="user-info">Cargando datos del usuario...</p>
+    <div class="container">
+      <section>
+        <h2>Bienvenido</h2>
+        <p id="user-info">Cargando datos del usuario...</p>
 
-                <h3>Informes Personalizados</h3>
-                <iframe title="Informe Power BI" width="600" height="373.5" src="https://app.powerbi.com/view?r=eyJrIjoiOGZkM2E2MGQtNjVjOC00Nzk2LTk1MDAtYjQ2ZTNlMTM0ZmU4IiwidCI6ImNhNThkMmE2LWViNTAtNDJhNi04MmVmLWYzYzY3NDM4MTZhNSIsImMiOjR9" frameborder="0" allowFullScreen="true"></iframe>
-            </section>
-        </div>
+        <h3>Informes Personalizados</h3>
+        <iframe title="Informe Power BI" width="600" height="373.5" src="https://app.powerbi.com/view?r=eyJrIjoiOGZkM2E2MGQtNjVjOC00Nzk2LTk1MDAtYjQ2ZTNlMTM0ZmU4IiwidCI6ImNhNThkMmE2LWViNTAtNDJhNi04MmVmLWYzYzY3NDM4MTZhNSIsImMiOjR9" frameborder="0" allowFullScreen="true"></iframe>
+      </section>
+    </div>
 
-        <!-- Firebase App (CDN) -->
-        <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-        <!-- Firebase Authentication (CDN) -->
-        <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+    <!-- Firebase App (CDN) -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
 
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                // Configuración de Firebase
-                const firebaseConfig = {
-                    apiKey: "AIzaSyC2VK-Hxs5ak7Cob6eWozaZia4avduk8F4",
-                    authDomain: "govia-505c5.firebaseapp.com",
-                    projectId: "govia-505c5",
-                    storageBucket: "govia-505c5.appspot.com",
-                    messagingSenderId: "906079889260",
-                    appId: "1:906079889260:web:d609395d33acc1534e3549"
-                };
-    
-                // Inicializar Firebase
-                firebase.initializeApp(firebaseConfig);
-                const auth = firebase.auth();
+    <script>
+      // Inicializar Firebase (usa la misma configuración que en index.html)
+      const firebaseConfig = {
+        apiKey: "AIzaSyC2VK-Hxs5ak7Cob6eWozaZia4avduk8F4",
+        authDomain: "govia-505c5.firebaseapp.com",
+        projectId: "govia-505c5",
+        storageBucket: "govia-505c5.appspot.com",
+        messagingSenderId: "906079889260",
+        appId: "1:906079889260:web:d609395d33acc1534e3549"
+      };
+      
+      firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
 
-                // Obtener la información del usuario autenticado
-                auth.onAuthStateChanged(function(user) {
-                    if (user) {
-                        // Usuario autenticado
-                        const userInfo = document.getElementById('user-info');
-                        userInfo.textContent = `Bienvenido, ${user.displayName || 'Usuario'}. Tu correo es ${user.email}.`;
-                    } else {
-                        // Redirigir al inicio de sesión si no está autenticado
-                        window.location.href = "index.html";
-                    }
-                });
-
-                // Si necesitas una opción de cierre de sesión, puedes añadir esto:
-                const logoutBtn = document.createElement('button');
-                logoutBtn.textContent = 'Cerrar Sesión';
-                document.body.appendChild(logoutBtn);
-
-                logoutBtn.addEventListener('click', function() {
-                    auth.signOut().then(() => {
-                        window.location.href = "index.html"; // Redirigir al inicio al cerrar sesión
-                    }).catch((error) => {
-                        console.error("Error al cerrar sesión: ", error);
-                    });
-                });
-            });
-        </script>
-
-    </body>
+      // Verifica si hay un usuario autenticado
+      auth.onAuthStateChanged((user) => {
+        if (user) {
+          // Usuario autenticado
+          document.getElementById('user-info').textContent = `Bienvenido, ${user.displayName}`;
+        } else {
+          // Redirige si no está autenticado
+          window.location.href = "/index.html";
+        }
+      });
+    </script>
+  </body>
 </html>

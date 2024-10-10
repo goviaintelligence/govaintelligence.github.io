@@ -126,7 +126,7 @@
         <div class="powered-by-ia">
             <p>Powered by Generative AI</p>
         </div>
-
+        <button id="google-signin-btn">INICIAR SESIÓN</button>
         <!-- Page Wrapper -->
             <div id="page-wrapper">
 
@@ -143,7 +143,7 @@
                                             <li><a href="Servicios.html">Servicios</a></li>
                                             <li><a href="Porfolio.html">Porfolio</a></li>
                                             <li><a href="contacto.html">Contacto</a></li>
-                                            <button id="google-signin-btn">INICIAR SESIÓN</button>
+                                            
                                         </ul>
                                     </div>
                                 </li>
@@ -931,7 +931,7 @@
                 });
             </script>
  
-<!-- Incluye el SDK de Firebase usando CDN -->
+<!-- Cargar Firebase desde CDN -->
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
 
@@ -949,23 +949,22 @@
   // Inicializar Firebase
   firebase.initializeApp(firebaseConfig);
 
-  // Inicializar Auth
+  // Manejar la autenticación
   const auth = firebase.auth();
 
-  // Manejo del inicio de sesión con Google
+  // Evento para el botón de inicio de sesión con Google
   document.getElementById('google-signin-btn').addEventListener('click', function() {
     const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider).then((result) => {
-      // Redirigir después del inicio de sesión exitoso
-      window.location.href = "/user.html";
-    }).catch((error) => {
-      console.error("Error de autenticación:", error);
-    });
+    auth.signInWithPopup(provider)
+      .then((result) => {
+        // Redirigir al usuario después de un inicio de sesión exitoso
+        window.location.href = "/user.html";
+      })
+      .catch((error) => {
+        console.error("Error de autenticación:", error);
+      });
   });
 </script>
-
-
-
 
 
     </body>
