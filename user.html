@@ -23,63 +23,53 @@
             </section>
         </div>
 
- <!-- Firebase App (CDN) -->
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-<!-- Firebase Authentication (CDN) -->
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+        <!-- Firebase App (CDN) -->
+        <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+        <!-- Firebase Authentication (CDN) -->
+        <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
 
-<script>
-  // Configuración de Firebase
-  const firebaseConfig = {
-    apiKey: "AIzaSyC2VK-Hxs5ak7Cob6eWozaZia4avduk8F4",
-    authDomain: "govia-505c5.firebaseapp.com",
-    projectId: "govia-505c5",
-    storageBucket: "govia-505c5.appspot.com",
-    messagingSenderId: "906079889260",
-    appId: "1:906079889260:web:d609395d33acc1534e3549"
-  };
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                // Configuración de Firebase
+                const firebaseConfig = {
+                    apiKey: "AIzaSyC2VK-Hxs5ak7Cob6eWozaZia4avduk8F4",
+                    authDomain: "govia-505c5.firebaseapp.com",
+                    projectId: "govia-505c5",
+                    storageBucket: "govia-505c5.appspot.com",
+                    messagingSenderId: "906079889260",
+                    appId: "1:906079889260:web:d609395d33acc1534e3549"
+                };
+    
+                // Inicializar Firebase
+                firebase.initializeApp(firebaseConfig);
+                const auth = firebase.auth();
 
-  // Inicializar Firebase
-  firebase.initializeApp(firebaseConfig);
-
-  // Autenticación
-  const auth = firebase.auth();
-
-  // Manejo del Google Sign-In
-  const signInBtn = document.getElementById('google-signin-btn');
-  if (signInBtn) {
-    signInBtn.addEventListener('click', function() {
-      console.log('Botón de Iniciar sesión clickeado');
-      const provider = new firebase.auth.GoogleAuthProvider();
-      auth.signInWithRedirect(provider);
-    });
-  }
-
-  // Manejar el redireccionamiento después de la autenticación
-  auth.getRedirectResult().then((result) => {
-    if (result.user) {
-      console.log('Login exitoso, redirigiendo a user.html...');
-      window.location.href = "/user.html";  // Redirige a la página personalizada
-    }
-  }).catch((error) => {
-    console.error("Error al iniciar sesión: ", error);
-  });
-</script>
-
-<<<<<<< HEAD
-                // Verificar si el usuario está autenticado
-                auth.onAuthStateChanged((user) => {
+                // Obtener la información del usuario autenticado
+                auth.onAuthStateChanged(function(user) {
                     if (user) {
-                        // Mostrar la información del usuario
-                        document.getElementById('user-info').innerText = `Bienvenido, ${user.email}`;
+                        // Usuario autenticado
+                        const userInfo = document.getElementById('user-info');
+                        userInfo.textContent = `Bienvenido, ${user.displayName || 'Usuario'}. Tu correo es ${user.email}.`;
                     } else {
-                        // Si no está autenticado, redirigir a la página de inicio de sesión
-                        window.location.href = "/index.html";
+                        // Redirigir al inicio de sesión si no está autenticado
+                        window.location.href = "index.html";
                     }
+                });
+
+                // Si necesitas una opción de cierre de sesión, puedes añadir esto:
+                const logoutBtn = document.createElement('button');
+                logoutBtn.textContent = 'Cerrar Sesión';
+                document.body.appendChild(logoutBtn);
+
+                logoutBtn.addEventListener('click', function() {
+                    auth.signOut().then(() => {
+                        window.location.href = "index.html"; // Redirigir al inicio al cerrar sesión
+                    }).catch((error) => {
+                        console.error("Error al cerrar sesión: ", error);
+                    });
                 });
             });
         </script>
-=======
->>>>>>> 3ec724953f2b4f2ccdb61c4180732672d314c5e5
+
     </body>
 </html>
